@@ -56,7 +56,7 @@ protected:
 
 
 public:
-	EventQA( XmlConfig * config, string nodePath );
+	EventQA( XmlConfig * config, string nodePath, string fl, string jp );
 	~EventQA();
 
 	virtual void make(){

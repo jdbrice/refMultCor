@@ -57,24 +57,23 @@ void RefMultPicoDst::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   fChain->SetBranchAddress("runId", &runId, &b_runId);
-   fChain->SetBranchAddress("eventId", &eventId, &b_eventId);
-   fChain->SetBranchAddress("iDay", &iDay, &b_iDay);
-   fChain->SetBranchAddress("iYear", &iYear, &b_iYear);
-   fChain->SetBranchAddress("nTriggers", &nTriggers, &b_nTriggers);
-   fChain->SetBranchAddress("triggerIds", triggerIds, &b_triggerIds);
+    fChain->SetBranchAddress("runId", &runId, &b_runId);
    fChain->SetBranchAddress("refMult", &refMult, &b_refMult);
+
+   fChain->SetBranchAddress("nPrimary", &nPrimary, &b_nPrimary);
+   fChain->SetBranchAddress("nGlobal", &nGlobal, &b_nGlobal);
+   fChain->SetBranchAddress("tofMult", &tofMult, &b_tofMult);
+   fChain->SetBranchAddress("nTofMatch", &nTofMatch, &b_nTofMatch);
+   
    fChain->SetBranchAddress("vertexX", &vertexX, &b_vertexX);
    fChain->SetBranchAddress("vertexY", &vertexY, &b_vertexY);
    fChain->SetBranchAddress("vertexZ", &vertexZ, &b_vertexZ);
-   fChain->SetBranchAddress("nTZero", &nTZero, &b_nTZero);
-   fChain->SetBranchAddress("tofMult", &tofMult, &b_tofMult);
-   fChain->SetBranchAddress("nTracks", &nTracks, &b_nTracks);
-   fChain->SetBranchAddress("nPrimary", &nPrimary, &b_nPrimary);
-   fChain->SetBranchAddress("nGlobal", &nGlobal, &b_nGlobal);
+
    fChain->SetBranchAddress("tofMatchFlag", tofMatchFlag, &b_tofMatchFlag);
-   fChain->SetBranchAddress("yLocal", yLocal, &b_yLocal);
-   fChain->SetBranchAddress("zLocal", zLocal, &b_zLocal);
+   
+   fChain->SetBranchAddress("bbcCoinRate", &bbcCoinRate, &b_bbcCoinRate);
+   fChain->SetBranchAddress("zdcCoinRate", &zdcCoinRate, &b_zdcCoinRate);
+
    fChain->SetBranchAddress("charge", charge, &b_charge);
    fChain->SetBranchAddress("pt", pt, &b_pt);
    fChain->SetBranchAddress("eta", eta, &b_eta);
@@ -83,20 +82,6 @@ void RefMultPicoDst::Init(TTree *tree)
    fChain->SetBranchAddress("pY", pY, &b_pY);
    fChain->SetBranchAddress("pZ", pZ, &b_pZ);
    fChain->SetBranchAddress("p", p, &b_p);
-   fChain->SetBranchAddress("dcaX", dcaX, &b_dcaX);
-   fChain->SetBranchAddress("dcaY", dcaY, &b_dcaY);
-   fChain->SetBranchAddress("dcaZ", dcaZ, &b_dcaZ);
-   fChain->SetBranchAddress("dca", dca, &b_dca);
-   fChain->SetBranchAddress("nHits", nHits, &b_nHits);
-   fChain->SetBranchAddress("nHitsFit", nHitsFit, &b_nHitsFit);
-   fChain->SetBranchAddress("nHitsPossible", nHitsPossible, &b_nHitsPossible);
-   fChain->SetBranchAddress("nHitsDedx", nHitsDedx, &b_nHitsDedx);
-   fChain->SetBranchAddress("dedx", dedx, &b_dedx);
-   fChain->SetBranchAddress("pathLength", pathLength, &b_pathLength);
-   fChain->SetBranchAddress("tof", tof, &b_tof);
-   fChain->SetBranchAddress("beta", beta, &b_beta);
-   fChain->SetBranchAddress("bbcCoinRate", &bbcCoinRate, &b_bbcCoinRate);
-   fChain->SetBranchAddress("zdcCoinRate", &zdcCoinRate, &b_zdcCoinRate);
    
    Notify();
 }

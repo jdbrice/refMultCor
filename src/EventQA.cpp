@@ -7,7 +7,7 @@
 /**
  * Constructor
  */
-EventQA::EventQA( XmlConfig * config, string np) : TreeAnalyzer( config, np ){
+EventQA::EventQA( XmlConfig * config, string np, string fl, string jp) : TreeAnalyzer( config, np, fl, jp ){
 
     /**
      * Setup the event cuts
@@ -41,13 +41,11 @@ EventQA::~EventQA(){
 void EventQA::preEventLoop(){
 	TreeAnalyzer::preEventLoop();
 	logger->info( __FUNCTION__ ) << endl;
-
-	logger->info( __FUNCTION__ ) << "Making Histos " << endl;
-	book->makeAll( nodePath+"histograms" );
+	
 }
 
 void EventQA::analyzeEvent() {
-	return;
+	
 	UInt_t run = pico->eventRunId();
 
 	int ri = runIndex( run );
@@ -59,8 +57,10 @@ void EventQA::analyzeEvent() {
 
 	book->fill( "events", ri, 1 );
 	book->fill( "bbc", ri, pico->eventBBC() );
+	book->fill( "zdc", ri, pico->eventZDC() );
 	book->fill( "nGlobal", ri, pico->eventNumGlobal() );
 	book->fill( "nPrimary", ri, pico->eventNumPrimary() );
+	book->fill( "nTofMatch", ri, pico->eventNumTofMatched() );
 	book->fill( "vtxX", ri, vX );
 	book->fill( "vtxY", ri, vY );
 	book->fill( "vtxZ", ri, pico->eventVertexZ() );
@@ -71,14 +71,15 @@ void EventQA::analyzeEvent() {
 	book->fill( "tofMult", ri, pico->eventTofMult() );
 	book->fill( "refMult", ri, pico->eventRefMult() );
 	book->fill( "refMultZ", pico->eventVertexZ(), pico->eventRefMult() );
-	book->fill( "refMultBBC", pico->eventVertexZ(), pico->eventBBC() );
-	book->fill( "refMultZDC", pico->eventVertexZ(), pico->eventZDC() );
+	book->fill( "refMultBBC", pico->eventBBC(), pico->eventRefMult() );
+	book->fill( "refMultZDC", pico->eventZDC(), pico->eventRefMult() );
+	book->fill( "refMultTOF", pico->eventTofMult(), pico->eventRefMult() );
 
 
 	/**
 	 * Analyze the tracks
 	 */
-	Int_t nTracks = pico->eventNumTracks();
+	Int_t nTracks = pico->eventNumPrimary();
 
 	for ( Int_t iTrack = 0; iTrack < nTracks; iTrack ++ ){
 
@@ -99,7 +100,6 @@ void EventQA::analyzeTrack( Int_t iTrack ){
 	book->fill( "ptPrimary", ri, pico->trackPt( iTrack ) );
 	book->fill( "etaPrimary", ri, pico->trackEta( iTrack ) );
 	book->fill( "pPrimary", ri, pico->trackP( iTrack ) );
-	book->fill( "chargePrimary", ri, pico->trackCharge( iTrack ) );
 
 	if ( pico->trackP( iTrack ) < 2.0 ){
 		book->fill( "qxPrimary", ri, pico->trackPx( iTrack ) );

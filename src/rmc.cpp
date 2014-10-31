@@ -12,16 +12,25 @@ using namespace jdb;
 
 int main( int argc, char* argv[] ) {
 
+
 	if ( argc >= 2 ){
+
+		string fileList = "";
+		string jobPrefix = "";
 
 		try{
 			XmlConfig config( argv[ 1 ] );
-			//config.report();
+			
+
+			if ( argc >= 4){
+				fileList = (string) argv[ 2 ];
+				jobPrefix = (string) argv[ 3 ];
+			}
 
 			string job = config.getString( "jobType" );
 
 			if ( "EventQA" == job ){
-				EventQA eqa( &config, "EventQA."  );
+				EventQA eqa( &config, "EventQA.", fileList, jobPrefix );
 
 				eqa.make();  
 			} else if ( "PlotQA" == job ){
