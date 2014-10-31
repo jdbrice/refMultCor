@@ -120,6 +120,9 @@ public :
    virtual Int_t numTofTracks(){ return tofMult; }
    virtual Double_t trackPt( Int_t iHit ) { return pt[ iHit ]; }
    virtual Double_t trackP( Int_t iHit ){ return p[ iHit ]; }
+   virtual Double_t trackPx( Int_t iHit ){ return pX[ iHit ]; }
+   virtual Double_t trackPy( Int_t iHit ){ return pY[ iHit ]; }
+   
    virtual Double_t trackEta( Int_t iHit ) { return eta[ iHit ]; }
    virtual Double_t trackDedx( Int_t iHit ){ return dedx[ iHit ]; }
    virtual Double_t trackPathLength( Int_t iHit ){ return pathLength[ iHit ]; }

@@ -40,11 +40,14 @@ EventQA::~EventQA(){
 
 void EventQA::preEventLoop(){
 	TreeAnalyzer::preEventLoop();
+	logger->info( __FUNCTION__ ) << endl;
 
+	logger->info( __FUNCTION__ ) << "Making Histos " << endl;
+	book->makeAll( nodePath+"histograms" );
 }
 
 void EventQA::analyzeEvent() {
-
+	return;
 	UInt_t run = pico->eventRunId();
 
 	int ri = runIndex( run );
@@ -92,11 +95,16 @@ void EventQA::analyzeEvent() {
 void EventQA::analyzeTrack( Int_t iTrack ){
 
 	UInt_t run = pico->eventRunId();
-	int ri = runMap[ run ];
+	int ri = runIndex( run );
 	book->fill( "ptPrimary", ri, pico->trackPt( iTrack ) );
 	book->fill( "etaPrimary", ri, pico->trackEta( iTrack ) );
 	book->fill( "pPrimary", ri, pico->trackP( iTrack ) );
 	book->fill( "chargePrimary", ri, pico->trackCharge( iTrack ) );
+
+	if ( pico->trackP( iTrack ) < 2.0 ){
+		book->fill( "qxPrimary", ri, pico->trackPx( iTrack ) );
+		book->fill( "qyPrimary", ri, pico->trackPy( iTrack ) );
+	}
 
 }
 
@@ -124,9 +132,9 @@ bool EventQA::keepTrack( Int_t iTrack ){
 
 
 
-Uint_t EventQA::nRuns = 824;
-Uint_t EventQA::runList[] = {
-	15046094
+int EventQA::nRuns = 824;
+int EventQA::runList[] = {
+	15046094,
 	15046102, 
 	15046104, 
 	15046105, 
@@ -950,6 +958,6 @@ Uint_t EventQA::runList[] = {
 	15070019, 
 	15070020,
 	15070021
-}
+};
 
 

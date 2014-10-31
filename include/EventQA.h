@@ -49,8 +49,9 @@ protected:
 	ConfigPoint *cutVertexROffset;
 	ConfigRange *cutTofMatch;
 
-	static UInt_t runList[];
-	vector<UInt_t> rList;
+	static int nRuns;
+	static int runList[];
+	vector<int> rList;
 	
 
 

@@ -23,7 +23,7 @@ public:
 // protected member methods
 protected:
 
-	static UInt_t runList[];
+	//static UInt_t runList[];
 	
 	TH1D* meanSliceX( TH2D * h2 );
 	TH1D* entrySliceX( TH2D * h2 );

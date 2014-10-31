@@ -25,6 +25,9 @@ public:
 	 */
 	virtual Double_t trackPt( Int_t iHit ) = 0;
 	virtual Double_t trackP( Int_t iHit ) = 0;
+	virtual Double_t trackPx( Int_t iHit ) = 0;
+	virtual Double_t trackPy( Int_t iHit ) = 0;
+	
 	virtual Double_t trackEta( Int_t iHit ) = 0;
 	virtual Int_t trackCharge( Int_t iHit ) = 0;
 
