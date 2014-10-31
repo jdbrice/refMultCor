@@ -30,6 +30,7 @@ using namespace jdb;
  * Local
  */
 #include "PicoDataStore.h"
+#include "TreeAnalyzer.h"
 
 class EventQA : public TreeAnalyzer
 {
@@ -47,7 +48,6 @@ protected:
 	ConfigRange *cutVertexR;
 	ConfigPoint *cutVertexROffset;
 	ConfigRange *cutTofMatch;
-	vector<int> cutTriggers;
 	
 
 
@@ -55,29 +55,21 @@ public:
 	EventQA( XmlConfig * config, string nodePath );
 	~EventQA();
 
-	void make() {
-		eventLoop();
+	virtual void make(){
+		TreeAnalyzer::make();
 	}
 
 protected:
 
 	/**
-	 * Loops the tree events and calculates the non-linear
-	 * recentering for use with unbinned methods
-	 */
-	void eventLoop();
-
-	void makeRunMap();
-
-	/**
 	 * Before the event loop starts - for subclass init
 	 */
-	virtual void preLoop();
+	virtual void preEventLoop();
 
 	/**
 	 * After the event loop starts - for subclass reporting
 	 */
-	virtual void postLoop(){}
+	virtual void postEventLoop(){}
 
 	/**
 	 * Analyze a track in the current Event
@@ -95,14 +87,14 @@ protected:
 	 * @return 	True 	- Keep Event 
 	 *          False 	- Reject Event
 	 */
-	virtual bool eventCut();
+	virtual bool keepEvent();
 
 	/**
 	 * Performs track based cuts
 	 * @return 	True 	- Keep Track 
 	 *          False 	- Reject Track
 	 */
-	virtual bool trackCut( Int_t iTrack );
+	virtual bool keepTrack( Int_t iTrack );
 	
 
 
