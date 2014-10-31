@@ -31,20 +31,11 @@ using namespace jdb;
  */
 #include "PicoDataStore.h"
 
-class EventQA
+class EventQA : public TreeAnalyzer
 {
 protected:
 
-	Logger * lg;
-	XmlConfig * cfg;
-	string nodePath;
-
-	HistoBook * book;
-	Reporter * reporter;
-
-	TChain * chain;
 	PicoDataStore * pico;
-	Int_t nEventsToProcess;
 
 	vector<int> runs;
 	map<int, int> runMap;
