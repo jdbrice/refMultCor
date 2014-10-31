@@ -48,6 +48,9 @@ protected:
 	ConfigRange *cutVertexR;
 	ConfigPoint *cutVertexROffset;
 	ConfigRange *cutTofMatch;
+
+	static UInt_t runList[];
+	vector<UInt_t> rList;
 	
 
 
@@ -95,6 +98,15 @@ protected:
 	 *          False 	- Reject Track
 	 */
 	virtual bool keepTrack( Int_t iTrack );
+
+	int runIndex( UInt_t runId ){
+		auto it = std::find( rList.begin(), rList.end(), runId );
+		if (it == rList.end()){
+			return -1;
+		}
+		
+		return (int)(it - rList.begin());
+	}
 	
 
 
