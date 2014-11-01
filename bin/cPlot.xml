@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<jobType>PlotQA</jobType>
+	<Logger>
+		<logLevel>info</logLevel>
+	</Logger>
+
+	<PlotQA>
+		<Reporter>
+			<output url="rpQaRefMult.pdf" width="800" height="400" />
+		</Reporter>
+		<Logger>
+			<logLevel>info</logLevel>
+		</Logger>	
+		
+		<input>
+			<data url="/Users/danielbrandenburg/bnl/local/data/allRefMult.root" />
+		</input>
+		
+		<output>
+			<data>qaRefMult.root</data>
+			<report>rpQaRefMult.pdf</report>
+		</output>
+
+		<makeMeanHistos>
+			bbc, 
+			ptPrimary,
+			refMult,
+			<!--zdc,
+			nGlobal,
+			nPrimary,
+			vtxR,
+			vtxX,
+			vtxY,
+			vtxZ,
+			etaPrimary,
+			tofMult,
+			refMultZ,
+			pPrimary -->
+		</makeMeanHistos>
+
+		<refMultZ>
+			<ranges> -75, -65, -55, -45, -35, -25, -15, -5, 5, 15, 25, 35, 45, 55, 65, 75 </ranges>
+			<Reporter>
+				<Logger>
+					<logLevel>info</logLevel>
+				</Logger>
+				<output url="rpZQaRefMult.pdf" width="400" height="400" />
+			</Reporter>
+		</refMultZ>
+
+		<histograms>
+		</histograms>
+
+	</PlotQA>
+
+</config>
