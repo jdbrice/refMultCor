@@ -1,7 +1,11 @@
 #ifndef PLOT_QA_H
 #define PLOT_QA_H
 
+#include "ConfigRange.h"
+
 #include "HistoAnalyzer.h"
+
+
 #include "TH1D.h"
 #include "TH2D.h"
 
@@ -10,6 +14,8 @@ class PlotQA : public HistoAnalyzer {
 protected:
 
 	Reporter * rpZ;
+
+	vector<ConfigRange*> periods;
 
 	vector<int> badRuns;
 
@@ -27,10 +33,9 @@ protected:
 	
 	TH1D* meanSliceX( TH2D * h2 );
 	TH1D* entrySliceX( TH2D * h2 );
-	void mirrorOverY( TH1D * h1 );
-	void translateX( TH1D * h1, int x );
+	TH1* isolate( TH1* h, int x1, int x2 );
 
-	TH1D* drawWithAcceptanceBands( TH2D* h, double nSig );
+	void drawWithAcceptanceBands( TH1D* h, double nSig );
 
 	/**
 	 * For zVertex 

@@ -15,9 +15,14 @@
 		</Logger>	
 		
 		<input>
-			<data url="/Users/danielbrandenburg/bnl/local/data/allRefMult.root" />
+			<data url="/Users/danielbrandenburg/bnl/local/data/RefMultHists/allRefMult.root" />
 		</input>
 		
+		<timePeriods>
+			<A min="1" max="200" />
+			<B min="201" max="734" />
+		</timePeriods>
+
 		<output>
 			<data>qaRefMult.root</data>
 			<report>rpQaRefMult.pdf</report>
@@ -43,15 +48,15 @@
 		<refMultZ>
 			<ranges> -75, -65, -55, -45, -35, -25, -15, -5, 5, 15, 25, 35, 45, 55, 65, 75 </ranges>
 			<Reporter>
-				<Logger>
-					<logLevel>info</logLevel>
-				</Logger>
 				<output url="rpZQaRefMult.pdf" width="400" height="400" />
 			</Reporter>
 		</refMultZ>
 
 		<histograms>
 		</histograms>
+		<style>
+			<profile lineColor="black" markerStyle="7" draw="PE"/>
+		</style>
 
 	</PlotQA>
 
