@@ -38,7 +38,7 @@ int main( int argc, char* argv[] ) {
 				PlotQA pqa( &config, "PlotQA." );
 				pqa.make();
 			} else if ( "RunList" == job ){
-				RunListMaker rlm( &config, "RunListMaker." );
+				RunListMaker rlm( &config, "RunListMaker.", fileList, jobPrefix );
 				rlm.make(); 
 			}
 

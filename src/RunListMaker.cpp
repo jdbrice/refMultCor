@@ -1,7 +1,7 @@
 #include "RunListMaker.h"
 #include "RefMultPicoDst.h"
 
-RunListMaker::RunListMaker( XmlConfig * config, string np ) : TreeAnalyzer( config, np ){
+RunListMaker::RunListMaker( XmlConfig * config, string np, string fl, string jp ) : TreeAnalyzer( config, np, fl, jp ){
 
 	pico = new RefMultPicoDst( chain );
 

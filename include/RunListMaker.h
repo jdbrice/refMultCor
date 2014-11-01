@@ -18,7 +18,7 @@ protected:
 	PicoDataStore * pico;
 
 public:
-	RunListMaker( XmlConfig * config, string np );
+	RunListMaker( XmlConfig * config, string np, string fileList, string prefix );
 	~RunListMaker();
 
 protected:
