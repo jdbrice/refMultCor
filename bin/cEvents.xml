@@ -8,7 +8,7 @@
 
 
 	<b hide="true" >
-		<ei width="1" min="0" max="1000" />
+		<ei width="1" min="0" max="800" />
 
 		<events width="1" min="0" max="2" />
 		<pt width="0.005" min="0.1" max="10.0" />
@@ -38,7 +38,7 @@
 		</Reporter>
 		
 		<input>
-			<dst treeName="tree" maxFiles="3" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
+			<dst treeName="tree" maxFiles="1" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
 		</input>
 
 		<splitRuns>15052075</splitRuns>
