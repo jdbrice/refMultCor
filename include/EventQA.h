@@ -101,6 +101,8 @@ protected:
 	virtual bool keepTrack( Int_t iTrack );
 
 	int runIndex( UInt_t runId ){
+		cout << "Run Index : " << (runId - 15046094 ) << endl;
+		return (runId - 15046094);
 		auto it = std::find( rList.begin(), rList.end(), runId );
 		if (it == rList.end()){
 			return -1;

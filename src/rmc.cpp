@@ -7,6 +7,7 @@ using namespace jdb;
 #include <iostream>
 #include "EventQA.h"
 #include "PlotQA.h"
+#include "RunListMaker.h"
 
 #include <exception>
 
@@ -36,6 +37,9 @@ int main( int argc, char* argv[] ) {
 			} else if ( "PlotQA" == job ){
 				PlotQA pqa( &config, "PlotQA." );
 				pqa.make();
+			} else if ( "RunList" == job ){
+				RunListMaker rlm( &config, "RunListMaker." );
+				rlm.make(); 
 			}
 
 		} catch ( exception &e ){
