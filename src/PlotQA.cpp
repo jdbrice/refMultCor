@@ -6,10 +6,10 @@
 
 PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 
-	lg->setClassSpace( "PlotQA" );
-	lg->info( __FUNCTION__ ) << endl;
+	logger->setClassSpace( "PlotQA" );
+	logger->info( __FUNCTION__ ) << endl;
 
-	lg->info(__FUNCTION__) << "Making Z Vertex Report from " << np+"refMultZ.Reporter" << endl;
+	logger->info(__FUNCTION__) << "Making Z Vertex Report from " << np+"refMultZ.Reporter" << endl;
 	rpZ = new Reporter( cfg, np+"refMultZ.Reporter." );
 
 }
@@ -24,18 +24,18 @@ void PlotQA::make(){
 
 	gStyle->SetOptStat( 0 );
 
-	lg->info( __FUNCTION__ ) << "{" << endl;
+	logger->info( __FUNCTION__ ) << "{" << endl;
 	vector<string> hNames = cfg->getStringVector( nodePath + "makeMeanHistos" );
 
 	book->cd();
 
-	lg->info( __FUNCTION__ ) << "Found " << ts( (int)hNames.size() ) << " Histograms" << endl;
+	logger->info( __FUNCTION__ ) << "Found " << ts( (int)hNames.size() ) << " Histograms" << endl;
 	for ( int i = 0; i < hNames.size(); i++ ){
 	
 		TH2D * h2 = (TH2D*)inFile->Get( hNames[ i ].c_str() );
 		h2->GetXaxis()->SetRange( 200, 1200 );
 		
-		lg->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
+		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
 
 
 		/*TH1D * h1 = meanSliceX( h2 );
@@ -71,7 +71,7 @@ void PlotQA::make(){
 
 	//makeZVertexProjections();
 
-	lg->info( __FUNCTION__ ) << "}" << endl;
+	logger->info( __FUNCTION__ ) << "}" << endl;
 
 }
 
@@ -87,7 +87,7 @@ TH1D* PlotQA::drawWithAcceptanceBands( TH2D* h2, double nSig ){
 	
 	double m = h2->GetMean(2);
 	double rms = h2->GetRMS(2) * nSig;
-	lg->info(__FUNCTION__) << "Sig = " << h2->GetRMS(2) << endl;
+	logger->info(__FUNCTION__) << "Sig = " << h2->GetRMS(2) << endl;
 
 	h1->GetYaxis()->SetRangeUser( m - rms * 1.5, m + rms * 1.5  );
 
@@ -203,7 +203,7 @@ void PlotQA::makeZVertexProjections(){
 	for ( int i = 0; i < ranges.size() - 1; i++ ){
 		int x1 = x->FindBin( ranges[ i ] );
 		int x2 = x->FindBin( ranges[ i+1 ] );
-		lg->info(__FUNCTION__) << "Project ( " << ranges[ i ] << ", " << ranges[ i+1] << " ) -> ( " << x1 << ", " << x2 << " ) " << endl;
+		logger->info(__FUNCTION__) << "Project ( " << ranges[ i ] << ", " << ranges[ i+1] << " ) -> ( " << x1 << ", " << x2 << " ) " << endl;
 
 
 		TH1D * h1 = h2->ProjectionY( ("refMult_" + ts( ranges[i] )).c_str(), x1, x2 );
