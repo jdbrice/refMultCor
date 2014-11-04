@@ -19,20 +19,28 @@
 		</input>
 		
 		<timePeriods>
-			<A min="1" max="200" />
-			<B min="201" max="734" />
+			<!--<A min="1" max="24" />-->
+			<B min="24" max="156" />
+			<C min="156" max="734" />
 		</timePeriods>
+		
+		<badRunCuts>
+			<bbc sigma="5" />
+			<ptPrimary sigma="3" />
+			<refMult sigma="4" />
+			<events min="500" />
+		</badRunCuts>
 
 		<output>
 			<data>qaRefMult.root</data>
 			<report>rpQaRefMult.pdf</report>
 		</output>
 
-		<makeMeanHistos>
+		<runByRun>
 			bbc, 
 			ptPrimary,
 			refMult,
-			<!--zdc,
+			zdc,
 			nGlobal,
 			nPrimary,
 			vtxR,
@@ -41,21 +49,55 @@
 			vtxZ,
 			etaPrimary,
 			tofMult,
+			pPrimary
+		</runByRun>
+		<refMultVersus>
 			refMultZ,
-			pPrimary -->
-		</makeMeanHistos>
+			refMultBBC,
+			refMultZDC,
+			refMultTOF
+		</refMultVersus>
 
 		<refMultZ>
 			<ranges> -75, -65, -55, -45, -35, -25, -15, -5, 5, 15, 25, 35, 45, 55, 65, 75 </ranges>
 			<Reporter>
 				<output url="rpZQaRefMult.pdf" width="400" height="400" />
 			</Reporter>
+			<fit x1="250" x2="330"/>
 		</refMultZ>
+
+
 
 		<histograms>
 		</histograms>
 		<style>
 			<profile lineColor="black" markerStyle="7" draw="PE"/>
+			<bad lineColor="red" markerColor="red" markerStyle="3" draw="SAME PE"/>
+			<bbc title="<BBC>" range="-4000, 10000" />
+			<ptPrimary title="<P_{T} or Primary Tracks>" range="0.2, 0.8" />
+			<refMult title="<Ref Mult>" />
+			<zdc title="<ZDC>" />
+			<nGlobal title="<# Global Tracks>" />
+			<nPrimary title="<# of Primary Tracks>" />
+			<vtxR title="<R Vertex>" />
+			<vtxX title="<X Vertex>" />
+			<vtxY title="<Y Vertex>" />
+			<vtxZ title="<Z Vertex>" />
+			<etaPrimary title="<#eta of Primary Tracks>" />
+			<pPrimary title="<P of Primary Tracks>" range="0.2, 0.8" />
+			<tofMult title="<Tof Mult>" />
+			<allRunByRun lineColor="black" markerStyle="7" draw="PE" x="Run Index" />
+
+			<refMultZ title="<Ref Mult> vs. Z" x="Z Vertex"/>
+			<refMultBBC title="<Ref Mult> vs. BBC" x="BBC"/>
+			<refMultZDC title="<Ref Mult> vs. ZDC" x="ZDC" domain="0, 45" range="0, 140"/>
+			<refMultTOF title="<Ref Mult> vs. TOF Mult" x="TOF Mult"/>
+			<allRefMultVersus lineColor="black" markerStyle="7" draw="PE" y="<Ref Mult>" />
+
+			<allZProjections x="Ref Mult" logY="0" markerStyle="7" domain="200, 350"/>
+
+			<zFit title="Z Vertex Dep." x=" Z [cm]" y="Max Ref Mult" draw="P" markerStyle="9" range="250, 300"/>
+
 		</style>
 
 	</PlotQA>

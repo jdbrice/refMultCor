@@ -22,6 +22,10 @@ EventQA::EventQA( XmlConfig * config, string np, string fl, string jp) : TreeAna
     logger->setClassSpace( "EventQA" );
 
     rList.assign( runList, runList + nRuns );
+
+    badRuns = cfg->getIntVector( np+"badRuns" );
+
+    logger->info(__FUNCTION__) << "Found " << badRuns.size() << " Bad Runs " << endl;
 }
 /**
  * Destructor
@@ -49,8 +53,10 @@ void EventQA::analyzeEvent() {
 	UInt_t run = pico->eventRunId();
 
 	int ri = runIndex( run );
-	if ( ri < 0 || ri > nRuns )
+	bool br = badRun( run );
+	if ( ri < 0 || ri > nRuns || br ){
 		return;
+	}
 
 	double vX = pico->eventVertexX();
 	double vY = pico->eventVertexY();
@@ -129,7 +135,6 @@ bool EventQA::keepTrack( Int_t iTrack ){
 
 	return true;
 }
-
 
 
 int EventQA::nRuns = 731;

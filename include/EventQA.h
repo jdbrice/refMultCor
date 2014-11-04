@@ -49,10 +49,9 @@ protected:
 	ConfigPoint *cutVertexROffset;
 	ConfigRange *cutTofMatch;
 
-	static int nRuns;
-	static int runList[];
-	vector<int> rList;
 	
+	vector<int> rList;
+	vector<int> badRuns;
 
 
 public:
@@ -62,6 +61,9 @@ public:
 	virtual void make(){
 		TreeAnalyzer::make();
 	}
+
+	static int nRuns;
+	static int runList[];
 
 protected:
 
@@ -107,6 +109,18 @@ protected:
 		}
 		
 		return (int)(it - rList.begin()) + 1;
+	}
+
+	bool badRun( UInt_t runId ){
+		if ( badRuns.size() <= 0 )
+			return false;
+		
+		auto it = std::find( badRuns.begin(), badRuns.end(), runId );
+		if (it == badRuns.end()){
+			return false;
+		}
+		
+		return true;
 	}
 	
 

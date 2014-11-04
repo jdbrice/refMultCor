@@ -38,13 +38,13 @@
 		</Reporter>
 		
 		<input>
-			<dst treeName="tree" maxFiles="1" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
+			<dst treeName="tree" maxFiles="2" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
 		</input>
 
 		<splitRuns>15052075</splitRuns>
 		
 		<eventCuts>
-			<vertexZ min="-40" max="40" />
+			<vertexZ min="-100" max="100" />
 			<vertexR min="0.0" max="2.0" />
 			<!--<vertexROffset x="0" y="0.86" />-->
 			<tofMult min="2" />
@@ -86,6 +86,50 @@
 			<qyPrimary title="Qy" xBins="b.ei" yBins="b.q" />
 			
 		</histograms>
+
+		<badRuns>
+			15047015, 
+			15047019, 
+			15047021, 
+			15047024, 
+			15047027, 
+			15047028, 
+			15047030, 
+			15047039, 
+			15047040, 
+			15047041, 
+			15047050, 
+			15047052, 
+			15047053, 
+			15047056, 
+			15047065, 
+			15047068, 
+			15047069, 
+			15047074, 
+			15047075, 
+			15047082, 
+			15047086, 
+			15047087, 
+			15047096, 
+			15047097, 
+			15049085, 
+			15051137, 
+			15051146, 
+			15051147, 
+			15051156, 
+			15052073, 
+			15052074, 
+			15053029, 
+			15053034, 
+			15053049, 
+			15053050, 
+			15055002, 
+			15061003, 
+			15068016, 
+			15068018, 
+			15068022, 
+			15069040 
+		</badRuns>
 
 	</EventQA>
 

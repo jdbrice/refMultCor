@@ -8,6 +8,10 @@
 
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TLine.h"
+#include "TMath.h"
+#include "TF1.h"
+#include "TProfile.h"
 
 class PlotQA : public HistoAnalyzer {
 // Protected member properties
@@ -15,9 +19,10 @@ protected:
 
 	Reporter * rpZ;
 
-	vector<ConfigRange*> periods;
+	vector<ConfigRange*> period;
 
-	vector<int> badRuns;
+	map<int, bool> badRuns;
+	const static int nRuns = 732;
 
 // public member methods
 public:
@@ -29,13 +34,24 @@ public:
 // protected member methods
 protected:
 
+
+	void makeRunByRun();
+	void makeRefMultVersus();
 	//static UInt_t runList[];
 	
 	TH1D* meanSliceX( TH2D * h2 );
 	TH1D* entrySliceX( TH2D * h2 );
 	TH1* isolate( TH1* h, int x1, int x2 );
 
-	void drawWithAcceptanceBands( TH1D* h, double nSig );
+	TH1D* badRunsHist( TH1D* h, string name );
+	void drawWithAcceptanceBands( TProfile* h, double nSig, ConfigRange* cr );
+	void findBadRuns( TProfile* h, double nSig, ConfigRange* cr );
+	void findBadRunsFromEvents( TH1D* h, double nEvents );
+
+	double meanForPeriod( TProfile * h, ConfigRange * cr );
+	double rmsForPeriod( TProfile * h, ConfigRange * cr );
+
+	void reportBadRuns();
 
 	/**
 	 * For zVertex 
