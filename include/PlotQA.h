@@ -22,7 +22,7 @@ protected:
 	vector<ConfigRange*> period;
 
 	map<int, bool> badRuns;
-	const static int nRuns = 732;
+	const static int nRuns = 733;
 
 // public member methods
 public:
