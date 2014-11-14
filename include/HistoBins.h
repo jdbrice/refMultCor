@@ -4,27 +4,23 @@
 #include "XmlConfig.h"
 #include "Utils.h"
 
-/*jdoc{
-"name" : "",
-"params" : [ ],
-"paramDesc" : [ ],
-"returns" : [  ],
-"desc" : ""
-}*/
-
 namespace jdb{
+	/*jdoc{
+		"class" : "HistoBins",
+		"desc" : "Container and utility class for histogram style binning"
+	}*/
 	class HistoBins
 	{
 	public:
 		
 		/*jdoc{
-		"name" : "static vector<double> makeNBins( int nBins, double low, double high )",
-		"params" : ["int nBins", "double low", "double high" ],
-		"paramDesc" : [	"Number of Bins", 
-			"Lower edge of first bin", 
-			"Upper edge of last bin" ],
-		"returns" : [ "vector of bin edges" ],
-		"desc" : "Divides the range high - low into a fixed number of bins from low to high"
+			"name" : "static vector<double> makeNBins( int nBins, double low, double high )",
+			"params" : ["int nBins", "double low", "double high" ],
+			"paramDesc" : [	"Number of Bins", 
+				"Lower edge of first bin", 
+				"Upper edge of last bin" ],
+			"returns" : [ "vector of bin edges" ],
+			"desc" : "Divides the range high - low into a fixed number of bins from low to high"
 		}*/
 		static vector<double> makeNBins( int nBins, double low, double high ){
 
@@ -32,7 +28,7 @@ namespace jdb{
 			double step = (high - low ) / (double) nBins;
 			for (double i = low; i <= high; i += step ){
 				bins.push_back( i );
-			}
+			}`
 			return bins;
 		}	// binsFrom
 		
@@ -54,13 +50,24 @@ namespace jdb{
 			return bins;
 		}	// binsFrom
 
-		/**
-		 * Static findBin
-		 * Used to fnd the bin corresponding to a value in user space
-		 * @param  bins vector of in edes from low to high
-		 * @param  val  the value whose bin is desired
-		 * @return      bin index starting at zero, -1 for underflow and -2 for overflow
-		 */
+		/*jdoc{
+			"name" : "static int findBin( vector<double> &bins, double val )",
+			"params" : [
+				"&bins",
+				"val"
+			],
+			"paramDesc" : [
+				"Bins to search in",
+				"Search value"
+			],
+			"returns" : [
+				"-1 : Underflow",
+				"-2 : Overflow",
+				"-3 : Not Found",
+				"Otherwise the zero-indexed bin is returned"
+			],
+			"desc" : "Finds the bin corresponding to a value in the given bins"
+		}*/
 		static int findBin( vector<double> &bins, double val ){
 
 			if ( bins.size() < 2 )
@@ -83,42 +90,91 @@ namespace jdb{
 
 		}	// findBin
 
-		/**
-		 * Finds the bin for a given value 
-		 * @param  val Value to find bin for
-		 * @return     0 start - bin index
-		 */
+		/*jdoc{
+			"name" : "int findBin( double val )",
+			"params" : [
+				"val"
+			],
+			"paramDesc" : [
+				"Search value"
+			],
+			"returns" : [
+				"-1 : Underflow",
+				"-2 : Overflow",
+				"-3 : Not Found",
+				"Otherwise the zero-indexed bin is returned"
+			],
+			"desc" : "Finds the bin corresponding to a value in the object bins"
+		}*/
 		int findBin( double val ){
 			return findBin( bins, val );
 		} // findBin
 
+		/*jdoc{
+			"name" : "int length()",
+			"returns" : [
+				"Length of underlying vector containing the bin edges"
+			]
+		}*/
 		int length() {
 			return bins.size();
 		}
+		/*jdoc{
+			"name" : "int size()",
+			"returns" : [
+				"Size of underlying vector containing the bin edges"
+			]
+		}*/
 		int size() {
 			return bins.size();
 		}
+		/*jdoc{
+			"name" : "int nBins()",
+			"returns" : [
+				"Number of bins stored in the underlying vector of bin edges. Equal to size() - 1."
+			]
+		}*/
 		int nBins(){
 			return bins.size() - 1;
 		}
 
-		/**
-		 * Constructor for fixed width bins
-		 */
+		/*jdoc{
+			"name" : "HistoBins( double min, double max, double width )",
+			"params" : [
+				"min", "max", "width"
+			],
+			"paramDesc" : [
+				"Bin minimum value",
+				"Bin maximum value",
+				"Nominal bin width"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "Creates bins with a nominal bin width. The final bin may be smaller than the nominal size if width does not evenly divide the range"
+		}*/
 		HistoBins( double min, double max, double width ){
 			this->bins = makeFixedWidthBins( width, min, max );
 		}
 
-		/**
-		 * Constructor for variable bins
-		 */
+		
 		HistoBins( vector<double> bins ){
 			this->bins = bins;
 		}
 
-		/**
-		 * Constructor from config
-		 */
+		/*jdoc{
+			"name" : "HistoBins( XmlConfig * config, string nodePath, string mod = \"\" )",
+			"params" : [
+				"config", "nodePath", "mod"
+			],
+			"paramDesc" : [
+				"Project config", "Path to configuration node", "Optional: Attribute modifier"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "Creates histogram bins from a config node. Used heavily by HistoBook for config based histogram creation. Attribute modifier is used to select, x, y, etc. from the node."
+		}*/
 		HistoBins( XmlConfig * config, string nodePath, string mod = "" ){
 
 			if ( config->nodeExists( nodePath ) && config->getDoubleVector( nodePath ).size() >= 2 ){
@@ -158,10 +214,36 @@ namespace jdb{
 
 		}
 
+		/*jdoc{
+			"name" : "double& operator[] ( const int nIndex )",
+			"params" : [
+				"nIndex"
+			],
+			"paramDesc" : [
+				"Index to retrieve from the underlying vector of bin edges"
+			],
+			"returns" : [
+				"Bin edge indexed by nIndex"
+			],
+			"desc" : "Gets a bin edge from the underlying vector of bin edges"
+		}*/
 		double& operator[] ( const int nIndex ){
 			return bins[ nIndex ];
 		}
 
+		/*jdoc{
+			"name" : "string toString ()",
+			"params" : [
+				
+			],
+			"paramDesc" : [
+				
+			],
+			"returns" : [
+				"String representation of bins"
+			],
+			"desc" : ""
+		}*/
 		string toString() {
 			if ( width > 0 ) 
 				return "< " + ts( nBins() ) + " bins ( " + ts(min) + " -> " + ts(max) + " )  >";
@@ -184,8 +266,12 @@ namespace jdb{
 
 		~HistoBins(){}
 		
+		//jdoc{ "name" : "vector< double > bins", "desc" : "Vector containing the bin edges"}
 		vector<double> bins;
+		//jdoc{ "name" : "double width", "desc" : "Nominal width of bins if fixed number or fixed width is used - not set for variable bin edges"}
 		double width;
+		//jdoc{ "name" : "double min", "desc" : ""}
+		//jdoc{ "name" : "double max", "desc" : ""}
 		double min, max;
 
 	};

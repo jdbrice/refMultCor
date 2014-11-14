@@ -104,10 +104,25 @@ namespace jdb{
 		static int findBin( vector<double> &bins, double value ){
 			return HistoBins::findBin( bins, value );
 		}
-		/**
-		 * Static Usage
+		
+
+		/*jdoc{
+			"name" : 'HistoBook( string name, string input = "", string inDir = "" )',
+			"params" : [ "name", "input", "inDir" ],
+			"paramDesc" : [ "Name of root file output", "Optional: input file to merge in", "Optional: directory in input" ],
+			"returns" : [  ],
+			"desc" : "Constructor: Creates a HistoBook with no config support (legacy )"
+			}
 		 */
 		HistoBook( string name, string input = "", string inDir = "" );
+		/*jdoc{
+			"name" : 'HistoBook( string name, XmlConfig* config, string input = "", string inDir = "" )',
+			"params" : [ "name", "config", "input", 'inDir' ],
+			"paramDesc" : [ "Name of root file output", "Project config file", "Optional: input file to merge in", "Optional: directory in input" ],
+			"returns" : [  ],
+			"desc" : "Constructor: Creates a HistoBook with config support"
+			}
+		 */
 		HistoBook( string name, XmlConfig* config, string input = "", string inDir = "");
 		~HistoBook();
 

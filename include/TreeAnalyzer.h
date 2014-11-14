@@ -21,39 +21,43 @@ using namespace jdb;
 #include "TChain.h"
 #include "TError.h"
 
+/*jdoc{
+	"class" : "TreeAnalyzer",
+	"desc" : ""
+}*/
 class TreeAnalyzer
 {
 // protected properties
 protected:
 	
-	/**jdoc{ "name" : "Logger *logger", "desc" : "The logging object for the job"}*/
+	//jdoc{ "name" : "Logger *logger", "desc" : "The logging object for the job"}
 	Logger 		*logger;
-	/**jdoc{"name" : "XmlConfig *cfg", "desc" : ""}*/
+	/*jdoc{"name" : "XmlConfig *cfg", "desc" : "Project config"}*/
 	XmlConfig 	*cfg;
-	/**jdoc{"name" : "string nodePath", "desc" : ""}*/
+	/*jdoc{"name" : "string nodePath", "desc" : "Node path in config file"}*/
 	string 		nodePath;
 
-	/**jdoc{"name" : "HistoBook *book", "desc" : ""}*/
+	/*jdoc{"name" : "HistoBook *book", "desc" : "Store project histograms and data"}*/
 	HistoBook 	*book;
-	/**jdoc{"name" : "Reporter *reporter", "desc" : ""}*/
+	/*jdoc{"name" : "Reporter *reporter", "desc" : "For generating generic reports"}*/
 	Reporter 	*reporter;
-	/**jdoc{"name" : "TChain *chain", "desc" : ""}*/
+	/*jdoc{"name" : "TChain *chain", "desc" : "The chain object which gets automatically set up"}*/
 	TChain 		*chain;
 
-	/**jdoc{"name" : "int nEventsToProcess", "desc" : ""}*/
+	/*jdoc{"name" : "int nEventsToProcess", "desc" : ""}*/
 	int nEventsToProcess;
 
 // public methods
 public:
 	/*jdoc{
-	"name" : 'TreeAnalyzer( XmlConfig * config, string nodePath, string fileList ="", string jobPrefix ="")',
-	"params" : [ "XmlConfig* config", "string nodePath", 'string fileList=""', 'string jobPrefix=""' ],
-	"paramDesc" : [ "Project's config object", 
-		"The node path containing configuration parameters",
-		"Optional: File list for parallel jobs",
-		"Optional: Job prefix for parallel jobs. Will be prepended to output file names." ],
-	"returns" : [  ],
-	"desc" : ""
+		"name" : "TreeAnalyzer( XmlConfig * config, string nodePath, string fileList =\"\", string jobPrefix =\"\")",
+		"params" : [ "config", "nodePath", "fileList", "jobPrefix" ],
+		"paramDesc" : [ "Project's config object", 
+			"The node path containing configuration parameters",
+			"Optional: File list for parallel jobs",
+			"Optional: Job prefix for parallel jobs. Will be prepended to output file names." ],
+		"returns" : [  ],
+		"desc" : ""
 	}*/
 	TreeAnalyzer( XmlConfig * config, string np, string fileList ="", string jobPrefix ="");
 	~TreeAnalyzer();
@@ -78,7 +82,7 @@ protected:
 	virtual bool keepEvent();
 
 	/*jdoc{
-	"name" : "virtual void preEventLoop",
+	"name" : "virtual void preEventLoop()",
 	"params" : [ ],
 	"paramDesc" : [ ],
 	"returns" : [  ],
@@ -105,6 +109,11 @@ protected:
 	virtual void analyzeEvent(){}
 	
 };
+
+
+/*jdoc{
+	"example" : ""
+}*/
 
 
 #endif
