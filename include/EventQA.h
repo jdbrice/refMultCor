@@ -54,6 +54,10 @@ protected:
 	vector<int> rList;
 	vector<int> badRuns;
 
+	bool correctZ;
+	bool correctMCG;
+	RefMultCorrection * rmc;
+
 
 public:
 	EventQA( XmlConfig * config, string nodePath, string fl, string jp );

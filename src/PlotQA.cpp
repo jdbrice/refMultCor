@@ -5,7 +5,7 @@
 
 PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 
-	Logger::setGlobalLogLevel( Logger::llInfo );
+	//
 	logger->setClassSpace( "PlotQA" );
 	logger->info( __FUNCTION__ ) << endl;
 
@@ -19,7 +19,7 @@ PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 		logger->info( __FUNCTION__ ) << " Initializing Run range [ " << i << " ] = " << cr->toString() << endl;
 	}
 
-	RefMultCorrection * rmc = new RefMultCorrection( config->getString( "RMCParams" ) );
+	
 
 }
 
@@ -381,9 +381,9 @@ void PlotQA::makeZVertexProjections(){
 		book->style( "fRes" )->set( nodePath+"style.zFit" )->draw();
 		p6->Draw("SAME");
 	cout << "zParams : " ;
-	for ( int i = 0; i < 6; i++ ){
+	for ( int i = 0; i < 7; i++ ){
 		cout << p6->GetParameter( i );
-		if ( i != 5 )
+		if ( i != 6 )
 			cout << ", ";
 	}
 	cout << endl;

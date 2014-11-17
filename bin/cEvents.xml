@@ -38,8 +38,11 @@
 		</Reporter>
 		
 		<input>
-			<dst treeName="tree" maxFiles="2" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
+			<dst treeName="tree" maxFiles="10" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
 		</input>
+
+		<RMCParams>StRMCParams.xml</RMCParams>
+		<correctRefMult zVertex="true" mcg="false" />
 
 		<splitRuns>15052075</splitRuns>
 		

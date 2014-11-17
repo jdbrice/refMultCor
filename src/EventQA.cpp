@@ -26,6 +26,13 @@ EventQA::EventQA( XmlConfig * config, string np, string fl, string jp) : TreeAna
     badRuns = cfg->getIntVector( np+"badRuns" );
 
     logger->info(__FUNCTION__) << "Found " << badRuns.size() << " Bad Runs " << endl;
+
+    /**
+     * Setup correction parameters
+     */
+    correctZ = config->getBool( np+"correctRefMult:zVertex", false );
+    correctMCG = config->getBool( np+"correctRefMult:mcg", false );
+    rmc = new RefMultCorrection( config->getString( np + "RMCParams" ) );
 }
 /**
  * Destructor
@@ -60,6 +67,7 @@ void EventQA::analyzeEvent() {
 
 	double vX = pico->eventVertexX();
 	double vY = pico->eventVertexY();
+	double vZ = pico->eventVertexZ();
 
 	book->fill( "events", ri, 1 );
 	book->fill( "bbc", ri, pico->eventBBC() );
@@ -69,17 +77,24 @@ void EventQA::analyzeEvent() {
 	book->fill( "nTofMatch", ri, pico->eventNumTofMatched() );
 	book->fill( "vtxX", ri, vX );
 	book->fill( "vtxY", ri, vY );
-	book->fill( "vtxZ", ri, pico->eventVertexZ() );
+	book->fill( "vtxZ", ri, vZ );
 	
 	double vR = TMath::Sqrt( vX*vX + vY*vY );
 	book->fill( "vtxR", ri, vR );
 
+
+	int refMult = pico->eventRefMult();
+	if ( correctZ ){
+		refMult = rmc->refMult( refMult, vZ );
+	}
+
+
 	book->fill( "tofMult", ri, pico->eventTofMult() );
-	book->fill( "refMult", ri, pico->eventRefMult() );
-	book->fill( "refMultZ", pico->eventVertexZ(), pico->eventRefMult() );
-	book->fill( "refMultBBC", pico->eventBBC(), pico->eventRefMult() );
-	book->fill( "refMultZDC", pico->eventZDC(), pico->eventRefMult() );
-	book->fill( "refMultTOF", pico->eventTofMult(), pico->eventRefMult() );
+	book->fill( "refMult", ri, refMult );
+	book->fill( "refMultZ", vZ, refMult );
+	book->fill( "refMultBBC", pico->eventBBC(), refMult );
+	book->fill( "refMultZDC", pico->eventZDC(), refMult );
+	book->fill( "refMultTOF", pico->eventTofMult(), refMult );
 
 
 	/**

@@ -11,10 +11,10 @@
 			<output url="rpQaRefMult.pdf" width="600" height="500" />
 		</Reporter>
 		<Logger>
-			<logLevel>info</logLevel>
+			<logLevel>warning</logLevel>
 		</Logger>	
 
-		<RMCParams>StRMCParams.xml</RMCParams>
+		
 		
 		<input>
 			<!--<data url="/Users/danielbrandenburg/bnl/local/data/RefMultHists/allRefMult.root" />-->

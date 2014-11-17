@@ -1,6 +1,7 @@
 
 
 #include "XmlConfig.h"
+#include "Logger.h"
 using namespace jdb;
 
 
@@ -9,11 +10,12 @@ using namespace jdb;
 #include "PlotQA.h"
 #include "RunListMaker.h"
 
+
 #include <exception>
 
 int main( int argc, char* argv[] ) {
 
-
+	Logger::setGlobalLogLevel( Logger::llWarn );
 	if ( argc >= 2 ){
 
 		string fileList = "";
