@@ -33,13 +33,13 @@ namespace jdb{
 		}	// binsFrom
 		
 		/*jdoc{
-		"name" : "static vector<double> makeFixedWidthBins( double binWidth, double low, double high )",
-		"params" : ["double binWidth", "double low", "double high" ],
-		"paramDesc" : [	"Nominal width of each bin", 
+			"name" : "static vector<double> makeFixedWidthBins( double binWidth, double low, double high )",
+			"params" : ["double binWidth", "double low", "double high" ],
+			"paramDesc" : [	"Nominal width of each bin", 
 			"Lower edge of first bin", 
 			"Upper edge of last bin" ],
-		"returns" : [ "vector of bin edges" ],
-		"desc" : "Divides the range high - low into a fixed number of bins from low to high"
+			"returns" : [ "vector of bin edges" ],
+			"desc" : "Divides the range high - low into a fixed number of bins from low to high"
 		}*/
 		static vector<double> makeFixedWidthBins( double binWidth, double low, double high ){
 

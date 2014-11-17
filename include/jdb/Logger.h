@@ -58,7 +58,7 @@ namespace jdb {
 				"Global log level"
 			]
 		}*/
-		inline static int getGlobalLogLevel() { return llDefault; }
+		static int getGlobalLogLevel();
 		/*jdoc{
 			"name" : "inline static void setGlobalLogLevel( int ll )",
 			"params" : [
@@ -72,7 +72,7 @@ namespace jdb {
 			],
 			"desc" : "Sets the global log level"
 		}*/
-		inline static void setGlobalLogLevel( int ll ) { llGlobal = ll; }
+		static void setGlobalLogLevel( int ll );
 
 		/*jdoc{
 			"name" : "Logger( int ll, string classSpace, ostream* os )",
@@ -132,8 +132,25 @@ namespace jdb {
 		}*/
 		void setLogLevel( int ll ) { logLevel = ll; }
 
-
+		/*jdoc{
+			"name" : "string getClassSpace()",
+			"returns" : [
+				"Current class prefix for messages"
+			],
+			"desc" : ""
+		}*/
 		string getClassSpace() { return cSpace; }
+
+		/*jdoc{
+			"name" : "void setClassSpace(string cs )",
+			"params" : [
+				"cs"
+			],
+			"paramDesc" : [
+				"New class name for prepending to messages"
+			],
+			"desc" : ""
+		}*/
 		void setClassSpace(string cs ) { cSpace = cs; }
 
 		/*jdoc{
@@ -214,7 +231,7 @@ namespace jdb {
 			"returns" : [
 				"Integer representation of log level"
 			],
-			"desc" : "Ca be one of [ info, warning, error, all, none ] default is all"
+			"desc" : "Can be one of [ info, warning, error, all, none ] default is all"
 		}*/
 		static int logLevelFromString( string ll ){
 			if ( "info" == ll )

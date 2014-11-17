@@ -35,13 +35,13 @@ int unitTest_Utils(){
 
 	cout << endl << endl << "jdbUtils Tests: " << endl << endl;
 	cout << " int to string " << ts( 1000 ) << endl;
-	cout << " double to string " << ts( 1000.123123 ) << endl;
+	cout << " double to string " << dts( 1000.123123 ) << endl;
 	cout << " float to string " << ts( 1000.123f ) << endl;
 
 	TaskTimer tt;
 	tt.start();
 
-	int n = 10000000;
+	int n = 1000000;
 	TaskProgress tp( "taskProgress Test", n );
 	for ( int i = 0; i < n; i++ ){
 	  
@@ -90,7 +90,8 @@ int main( int argc, char* argv[] ) {
 		XmlConfig config( argv[ 1 ] );
 		
 		// create a logger from the configuration options
-		logger = LoggerConfig::makeLogger( &config, "Logger" );
+		Logger::setGlobalLogLevel( Logger::llInfo );
+		logger = new Logger();//LoggerConfig::makeLogger( &config, "Logger" );
 		
 		//config.report();
 		//config.childrenOf( "input" );

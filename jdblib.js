@@ -585,6 +585,23 @@ var jDoc = {
                 "returns" : []
             },
             {
+                "desc" : "",
+                "name" : "string getClassSpace()",
+                "returns" : [
+                    "Current class prefix for messages"
+                ]
+            },
+            {
+                "desc" : "",
+                "name" : "void setClassSpace(string cs )",
+                "paramDesc" : [
+                    "New class name for prepending to messages"
+                ],
+                "params" : [
+                    "cs"
+                ]
+            },
+            {
                 "desc" : "Shows all messages below llWarn",
                 "name" : "ostream & warn( string functionName = \"\" )",
                 "paramDesc" : [
@@ -624,7 +641,7 @@ var jDoc = {
                 ]
             },
             {
-                "desc" : "Ca be one of [ info, warning, error, all, none ] default is all",
+                "desc" : "Can be one of [ info, warning, error, all, none ] default is all",
                 "name" : "static int logLevelFromString( string ll )",
                 "paramDesc" : [
                     "String representation of log level"
