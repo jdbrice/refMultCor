@@ -28,7 +28,7 @@ namespace jdb{
 			double step = (high - low ) / (double) nBins;
 			for (double i = low; i <= high; i += step ){
 				bins.push_back( i );
-			}`
+			}
 			return bins;
 		}	// binsFrom
 		
