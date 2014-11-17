@@ -342,6 +342,183 @@ var jDoc = {
             }
         ]
     },
+    "HistoBook" : {
+        "className" : "HistoBook",
+        "desc" : "A book keeper and feature rich environemnt for using Root Hsitograms",
+        "methods" : [
+            {
+                "desc" : "Constructor: Creates a HistoBook with no config support (legacy )",
+                "name" : "HistoBook( string name, string input = \"\", string inDir = \"\" )",
+                "paramDesc" : [
+                    "Name of root file output",
+                    "Optional: input file to merge in",
+                    "Optional: directory in input to merge - others ignored"
+                ],
+                "params" : [
+                    "name",
+                    "input",
+                    "inDir"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Constructor: Creates a HistoBook with config support",
+                "name" : "HistoBook( string name, XmlConfig* config, string input = \"\", string inDir = \"\" )",
+                "paramDesc" : [
+                    "Name of root file output",
+                    "Project config file",
+                    "Optional: input file to merge in",
+                    "Optional: directory in input"
+                ],
+                "params" : [
+                    "name",
+                    "config",
+                    "input",
+                    "inDir"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Changes into the given directory. If the dir DNE it is created, else it is simply set as the current. Subdirectories can be used if the entire path is given, paths are never relative/",
+                "name" : "string cd( string dir = \"/\" )",
+                "paramDesc" : [
+                    "Directory to move into"
+                ],
+                "params" : [
+                    "dir"
+                ],
+                "returns" : [
+                    "Previous directory"
+                ]
+            },
+            {
+                "desc" : "Adds a root histogram to the book for safe-keeping",
+                "name" : "void add( string name, TH1 * h)",
+                "paramDesc" : [
+                    "Key name for histogram in book",
+                    "Root Histogam"
+                ],
+                "params" : [
+                    "name",
+                    "h"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Gets a ROOT histo out of the book by key",
+                "name" : "TH1* get( string name, string sdir = \"\" )",
+                "paramDesc" : [
+                    "Name (key) of histogram",
+                    "Optional: look for the histogram in the directory sdir"
+                ],
+                "params" : [
+                    "name",
+                    "sdir"
+                ],
+                "returns" : [
+                    "TH1* to histogram - may be NULL if DNE"
+                ]
+            },
+            {
+                "desc" : "Same as get but auto casts to a TH2",
+                "name" : "TH2* get2D( string name, string sdir = \"\" )",
+                "paramDesc" : [
+                    "Name (key) of histogram",
+                    "Optional: look for the histogram in the directory sdir"
+                ],
+                "params" : [
+                    "name",
+                    "sdir"
+                ],
+                "returns" : [
+                    "TH2* to histogram - may be NULL if DNE"
+                ]
+            },
+            {
+                "desc" : "Same as get but auto casts to a TH3",
+                "name" : "TH3* get3D( string name, string sdir = \"\" )",
+                "paramDesc" : [
+                    "Name (key) of histogram",
+                    "Optional: look for the histogram in the directory sdir"
+                ],
+                "params" : [
+                    "name",
+                    "sdir"
+                ],
+                "returns" : [
+                    "TH3* to histogram - may be NULL if DNE"
+                ]
+            },
+            {
+                "desc" : "This method checks for existance unlike using get(...)->Fill(...). If the histo DNE then an error is reported through the Logger and execution continues.",
+                "name" : "void fill( string name, double bin, double weight = 1)",
+                "paramDesc" : [
+                    "Key in book",
+                    "Bin index",
+                    "Weight for 1D, or y Bin index for TH2D"
+                ],
+                "params" : [
+                    "name",
+                    "bin",
+                    "weight"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Makes a histogram from a node in a config file <br/><code>&lthName key=\"\" nBins=\"42\" minX=\"0\" maxX=\"10\" \\&gt</code>",
+                "name" : "void make( XmlConfig * config, string nodeName )",
+                "paramDesc" : [
+                    "Config containing histogram schema",
+                    "Path to node containing schema"
+                ],
+                "params" : [
+                    "config",
+                    "nodeName"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Makes a single histogram from the class config file given during construction",
+                "name" : "void make( string nodeName )",
+                "paramDesc" : [
+                    "Path to a histogram schema node"
+                ],
+                "params" : [
+                    "nodeName"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Makes all histograms that are children of the given parent node in the class config file given during construction",
+                "name" : "void makeAll( string nodeName )",
+                "paramDesc" : [
+                    "Path to the parent node containing 1 or more histogram schema nodes"
+                ],
+                "params" : [
+                    "nodeName"
+                ],
+                "returns" : []
+            },
+            {
+                "desc" : "Saves all histograms and other Root objects attached to the file to the permanent file given during construction",
+                "name" : "void save()"
+            },
+            {
+                "desc" : "Example: book->style( \"h1\" )->set( \"title\", \"science\" )->draw(); ",
+                "name" : "HistoBook* style( string hName )",
+                "paramDesc" : [
+                    "Name of histogram to style"
+                ],
+                "params" : [
+                    "hName"
+                ],
+                "returns" : [
+                    "Histobook * of this for function chaining"
+                ]
+            }
+        ],
+        "properties" : []
+    },
     "Logger" : {
         "className" : "Logger",
         "desc" : "An all purpose logging utility with log level functionality. Meant to be used in modular projects. Multpile Logger instances can be used with different log levels.",
@@ -682,7 +859,7 @@ var jDoc = {
     },
     "XmlConfig" : {
         "className" : "XmlConfig",
-        "desc" : "Class for using xml files as project config files. See github for example config files <xmp>```<config></config></xmp>",
+        "desc" : "Class for using xml files as project config files. See github for example config files",
         "methods" : [
             {
                 "desc" : "",
