@@ -17,7 +17,7 @@ ROOTLIBS      	= $(shell root-config --libs)
 ROOTGLIBS     	= $(shell root-config --glibs)
 
 # Custom Project includes and libs
-includes		= -I../include -I. -I$(ROOTSYS)/include -I$(ROOTDEV)/include 
+includes		= -I../include -I../include/jdb/ -I. -I$(ROOTSYS)/include -I$(ROOTDEV)/include 
 libraries 			= 	$(ROOTLIBS) -lGui -lHtml -lGuiHtml $(CERNLIBS) $(SYSLIBS) \
 
 
