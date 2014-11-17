@@ -31,6 +31,7 @@ using namespace jdb;
  */
 #include "PicoDataStore.h"
 #include "TreeAnalyzer.h"
+#include "RefMultCorrection.h"
 
 class EventQA : public TreeAnalyzer
 {

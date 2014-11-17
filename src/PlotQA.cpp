@@ -1,9 +1,11 @@
 #include "PlotQA.h"
 #include "EventQA.h"
 
+#include "RefMultCorrection.h"
 
 PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 
+	Logger::setGlobalLogLevel( Logger::llInfo );
 	logger->setClassSpace( "PlotQA" );
 	logger->info( __FUNCTION__ ) << endl;
 
@@ -17,6 +19,7 @@ PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 		logger->info( __FUNCTION__ ) << " Initializing Run range [ " << i << " ] = " << cr->toString() << endl;
 	}
 
+	RefMultCorrection * rmc = new RefMultCorrection( config->getString( "RMCParams" ) );
 
 }
 
@@ -360,7 +363,6 @@ void PlotQA::makeZVertexProjections(){
 		book->get( name )->Fit( f1, "RQ" );
 		book->get( "fRes" )->SetBinContent( (i+1), f1->GetParameter( 2 ) );
 		double h = f1->GetParameter( 2 );
-		cout << " h = " << h << endl;
 
 		TLine * hLine = new TLine( h, 0, h, f1->Eval( h )  );
 		hLine->SetLineColor( kRed );
@@ -378,6 +380,13 @@ void PlotQA::makeZVertexProjections(){
 		book->get("fRes")->Fit( p6, "QN" );
 		book->style( "fRes" )->set( nodePath+"style.zFit" )->draw();
 		p6->Draw("SAME");
+	cout << "zParams : " ;
+	for ( int i = 0; i < 6; i++ ){
+		cout << p6->GetParameter( i );
+		if ( i != 5 )
+			cout << ", ";
+	}
+	cout << endl;
 	rpZ->savePage();
 	rpZ->saveImage( "img/Z/maxRefMult.pdf" );
 	

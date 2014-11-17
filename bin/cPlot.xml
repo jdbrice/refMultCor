@@ -13,6 +13,8 @@
 		<Logger>
 			<logLevel>info</logLevel>
 		</Logger>	
+
+		<RMCParams>StRMCParams.xml</RMCParams>
 		
 		<input>
 			<!--<data url="/Users/danielbrandenburg/bnl/local/data/RefMultHists/allRefMult.root" />-->
