@@ -62,7 +62,9 @@
 		<refMultZ>
 			<ranges> -75, -65, -55, -45, -35, -25, -15, -5, 5, 15, 25, 35, 45, 55, 65, 75 </ranges>
 			<Reporter>
-				<output url="rpZQaRefMult.pdf" width="250" height="250" />
+				<!-- For presentation formatted -->
+				<!--<output url="rpZQaRefMult.pdf" width="250" height="250" />-->
+				<output url="rpZQaRefMult.pdf" width="600" height="600" />
 			</Reporter>
 			<fit x1="250" x2="330"/>
 		</refMultZ>
@@ -95,9 +97,9 @@
 			<refMultTOF title="<Ref Mult> vs. TOF Mult" x="TOF Mult"/>
 			<allRefMultVersus lineColor="black" markerStyle="8" draw="PE" y="<Ref Mult>" numberOfTicks="5, 0, 1" numberOfTicks="5, 0, 2" />
 
-			<allZProjections x="Ref Mult" logY="0" markerStyle="7" domain="230, 350" numberOfTicks="5, 0, 1" numberOfTicks="5, 0, 2" lineWidth="6" y="Counts"/>
+			<allZProjections x="Ref Mult" logY="0" markerStyle="7" domain="200, 360" numberOfTicks="5, 0, 1" numberOfTicks="5, 0, 2" lineWidth="6" y="Counts"/>
 
-			<zFit title="" x=" Z Bin Center [cm]" y="Max Ref Mult" draw="P" markerStyle="8" range="250, 290" numberOfTicks="8, 0, 1" numberOfTicks="5, 0, 2"/>
+			<zFit title="" x=" Z Bin Center [cm]" y="Max Ref Mult" draw="P" markerStyle="8" range="225, 290" numberOfTicks="8, 0, 1" numberOfTicks="5, 0, 2"/>
 
 		</style>
 

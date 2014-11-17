@@ -324,10 +324,10 @@ TH1* PlotQA::isolate( TH1 * hIn, int x1, int x2 ){
 
 void PlotQA::makeZVertexProjections(){
 
+	gStyle->SetOptFit( 1 );
+
 	double fX1 = cfg->getDouble( nodePath + "refMultZ.fit:x1", 100 );
 	double fX2 = cfg->getDouble( nodePath + "refMultZ.fit:x2", 300 );
-
-
 
 	TH2D * h2 = (TH2D*)inFile->Get( "refMultZ" );
 	TAxis * x = h2->GetXaxis();
@@ -350,6 +350,7 @@ void PlotQA::makeZVertexProjections(){
 		rpZ->newPage();
 		
 		book->style( name )->set( nodePath+"style.allZProjections" )->draw();
+		
 		TF1 * f1 = new TF1( "fTail", fTail, fX1, fX2, 3 );
 		f1->SetParameters( 10000, .01, 300 );
 		f1->SetLineWidth( 7 );
@@ -374,13 +375,9 @@ void PlotQA::makeZVertexProjections(){
 
 	rpZ->newPage();
 		TF1* p6 = new TF1( "pol6", "pol6", -65, 65 );
-		TF1* p9 = new TF1( "pol9", "pol9", -65, 65 );
 		book->get("fRes")->Fit( p6, "QN" );
-		//book->get("fRes")->Fit( p9, "QN" );
-		
 		book->style( "fRes" )->set( nodePath+"style.zFit" )->draw();
 		p6->Draw("SAME");
-		//p9->Draw("Same");
 	rpZ->savePage();
 	rpZ->saveImage( "img/Z/maxRefMult.pdf" );
 	
