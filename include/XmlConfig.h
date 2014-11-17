@@ -24,7 +24,11 @@ using namespace std;
 using namespace rapidxml;
 
 namespace jdb {
-	
+
+	/*jdoc{
+			"class" : "XmlConfig",
+			"desc" : "Class for using xml files as project config files. See github for example config files"
+		}*/	
 	class XmlConfig {
 
 	public: 
@@ -155,6 +159,19 @@ namespace jdb {
 			return def;
 		}
 
+		/*jdoc{
+			"name" : "string getString( string nodePath, string def = \"\", bool trimW = true )",
+			"params" : [
+				"nodePath", "default", "trimW"
+			],
+			"paramDesc" : [
+				"Path to node", "Default value if node DNE", "Trim whitespace"
+			],
+			"returns" : [
+				"String in config file or default"
+			],
+			"desc" : ""
+		}*/
 		string getString( string nName, string def = "", bool trimW = true ){
 			
 			if ( !nodeExists( nName ) )

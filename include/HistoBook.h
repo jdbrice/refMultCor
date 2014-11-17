@@ -28,33 +28,6 @@
 #include "TClass.h"
 
 
-//  #include "TROOT.h"
-// #include <TRandom1.h>
-// #include <TH1F.h>
-// #include <TApplication.h>
-// #include "Riostream.h"
-// #include "TFile.h"
-// #include "TChain.h"
-// #include "TH1.h"
-// #include "TH2.h"
-// #include "TH3.h"
-// #include "TStyle.h"
-// #include "TCanvas.h"
-// #include "TProfile.h"
-// #include "TTree.h"
-// #include "TNtuple.h"  
-// #include "TRandom.h"
-// #include "TF1.h"
-// #include "TMath.h"
-// #include "TGraph.h"
-// #include "TGraphErrors.h"
-// #include "TPostScript.h"
-// #include "TString.h"
-// #include "TLeaf.h"
-// #include "TLegend.h"
-// #include "Math/Interpolator.h"
-// #include "TLatex.h"
-
 using namespace std;
 
 namespace jdb{
@@ -89,9 +62,10 @@ namespace jdb{
 
 
 
-	/**
-	 * HistoBook Class
-	 */
+	/*jdoc{
+		"class" : "HistoBook",
+		"desc" : "A book keeper and feature rich environemnt for using Root Hsitograms"
+	}*/
 	class HistoBook {
 
 	protected:
@@ -131,19 +105,116 @@ namespace jdb{
 		static int findBin( vector<double> &bins, double value ){
 			return HistoBins::findBin( bins, value );
 		}
-		/**
-		 * Static Usage
+		
+
+		/*jdoc{
+			"name" : "HistoBook( string name, string input = \"\", string inDir = \"\" )",
+			"params" : [ "name", "input", "inDir" ],
+			"paramDesc" : [ "Name of root file output", "Optional: input file to merge in", "Optional: directory in input to merge - others ignored" ],
+			"returns" : [  ],
+			"desc" : "Constructor: Creates a HistoBook with no config support (legacy )"
+			}
 		 */
 		HistoBook( string name, string input = "", string inDir = "" );
+		/*jdoc{
+			"name" : "HistoBook( string name, XmlConfig* config, string input = \"\", string inDir = \"\" )",
+			"params" : [ "name", "config", "input", "inDir" ],
+			"paramDesc" : [ "Name of root file output", "Project config file", "Optional: input file to merge in", "Optional: directory in input" ],
+			"returns" : [  ],
+			"desc" : "Constructor: Creates a HistoBook with config support"
+			}
+		 */
 		HistoBook( string name, XmlConfig* config, string input = "", string inDir = "");
 		~HistoBook();
 
-		
+		/*jdoc{
+			"name" : "string cd( string dir = \"/\" )",
+			"params" : [
+				"dir"
+			],
+			"paramDesc" : [
+				"Directory to move into"
+			],
+			"returns" : [
+				"Previous directory"
+			],
+			"desc" : "Changes into the given directory. If the dir DNE it is created, else it is simply set as the current. Subdirectories can be used if the entire path is given, paths are never relative/"
+		}*/
 		string cd( string dir = "/" );
+
+		/*jdoc{
+			"name" : "void add( string name, TH1 * h)",
+			"params" : [
+				"name", "h"
+			],
+			"paramDesc" : [
+				"Key name for histogram in book", "Root Histogam"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "Adds a root histogram to the book for safe-keeping"
+		}*/
 		void add( string name, TH1 * );
+
+		/*jdoc{
+			"name" : "TH1* get( string name, string sdir = \"\" )",
+			"params" : [
+				"name", "sdir"
+			],
+			"paramDesc" : [
+				"Name (key) of histogram", "Optional: look for the histogram in the directory sdir"
+			],
+			"returns" : [
+				"TH1* to histogram - may be NULL if DNE"
+			],
+			"desc" : "Gets a ROOT histo out of the book by key"
+		}*/
 		TH1* get( string name, string sdir = "" );
+
+		/*jdoc{
+			"name" : "TH2* get2D( string name, string sdir = \"\" )",
+			"params" : [
+				"name", "sdir"
+			],
+			"paramDesc" : [
+				"Name (key) of histogram", "Optional: look for the histogram in the directory sdir"
+			],
+			"returns" : [
+				"TH2* to histogram - may be NULL if DNE"
+			],
+			"desc" : "Same as get but auto casts to a TH2"
+		}*/
 		TH2* get2D( string name, string sdir = "" );
+
+		/*jdoc{
+			"name" : "TH3* get3D( string name, string sdir = \"\" )",
+			"params" : [
+				"name", "sdir"
+			],
+			"paramDesc" : [
+				"Name (key) of histogram", "Optional: look for the histogram in the directory sdir"
+			],
+			"returns" : [
+				"TH3* to histogram - may be NULL if DNE"
+			],
+			"desc" : "Same as get but auto casts to a TH3"
+		}*/
 		TH3* get3D( string name, string sdir = "" );
+
+		/*jdoc{
+			"name" : "void fill( string name, double bin, double weight = 1)",
+			"params" : [
+				"name", "bin", "weight"
+			],
+			"paramDesc" : [
+				"Key in book", "Bin index", "Weight for 1D, or y Bin index for TH2D"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "This method checks for existance unlike using get(...)->Fill(...). If the histo DNE then an error is reported through the Logger and execution continues."
+		}*/
 		void fill( string name, double bin, double weight = 1);
 		void make1F( string name, string title, uint nBins, double low, double hi );
 		void make1D( string name, string title, uint nBins, double low, double hi );
@@ -156,8 +227,50 @@ namespace jdb{
 						uint nBinsX, double x1, double x2, uint nBinsY, const Double_t* yBins );
 		void make2D( 	string name, string title, 
 						uint nBinsX, const Double_t* xBins, uint nBinsY, const Double_t*yBins );
+		
+		/*jdoc{
+			"name" : "void make( XmlConfig * config, string nodeName )",
+			"params" : [
+				"config", "nodeName"
+			],
+			"paramDesc" : [
+				"Config containing histogram schema", "Path to node containing schema"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "Makes a histogram from a node in a config file <br/><code>&lthName key=\"\" nBins=\"42\" minX=\"0\" maxX=\"10\" \\&gt</code>"
+		}*/
 		void make( XmlConfig * config, string nodeName );
+		
+		/*jdoc{
+			"name" : "void make( string nodeName )",
+			"params" : [
+				"nodeName"
+			],
+			"paramDesc" : [
+				"Path to a histogram schema node"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "Makes a single histogram from the class config file given during construction"
+		}*/
 		void make( string nodeName );
+
+		/*jdoc{
+			"name" : "void makeAll( string nodeName )",
+			"params" : [
+				"nodeName"
+			],
+			"paramDesc" : [
+				"Path to the parent node containing 1 or more histogram schema nodes"
+			],
+			"returns" : [
+				
+			],
+			"desc" : "Makes all histograms that are children of the given parent node in the class config file given during construction"
+		}*/
 		void makeAll( string nodeName );
 		void makeAll( XmlConfig * config, string nodeName );
 		void clone( string existing, string create );
@@ -174,8 +287,25 @@ namespace jdb{
 
 		TDirectory* getDirectory( ) { return gDirectory; }
 
+		/*jdoc{
+			"name" : "void save()",
+			"desc" : "Saves all histograms and other Root objects attached to the file to the permanent file given during construction"
+		}*/
 		void save();
 
+		/*jdoc{
+			"name" : "HistoBook* style( string hName )",
+			"params" : [
+				"hName"
+			],
+			"paramDesc" : [
+				"Name of histogram to style"
+			],
+			"returns" : [
+				"Histobook * of this for function chaining"
+			],
+			"desc" : "Example: book->style( \"h1\" )->set( \"title\", \"science\" )->draw(); "
+		}*/
 		HistoBook* style( string hName );
 
 		//set( string param, ... )
