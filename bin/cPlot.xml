@@ -18,7 +18,8 @@
 		
 		<input>
 			<!--<data url="/Users/danielbrandenburg/bnl/local/data/RefMultHists/allRefMult.root" />-->
-			<data url="/Users/danielbrandenburg/bnl/local/data/BadRunRemoveRefMult/allRefMult.root" />
+			<!--<data url="/Users/danielbrandenburg/bnl/local/data/BadRunRemoveRefMult/allRefMult.root" />-->
+			<data url="/Users/danielbrandenburg/bnl/local/data/RefMultZCorr/allRefMult.root" />
 		</input>
 		
 		<timePeriods>

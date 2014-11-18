@@ -58,6 +58,8 @@ protected:
 	bool correctMCG;
 	RefMultCorrection * rmc;
 
+	vector<ConfigRange*> period;
+
 
 public:
 	EventQA( XmlConfig * config, string nodePath, string fl, string jp );
@@ -126,6 +128,14 @@ protected:
 		}
 		
 		return true;
+	}
+
+	int periodIndex( UInt_t runIndex ){
+		for ( int i = 0; i < period.size(); i++ ){
+			if ( runIndex >= period[ i ]->min && runIndex <= period[ i ]->max )
+				return i;
+		}
+		return -1;
 	}
 	
 

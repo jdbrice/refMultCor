@@ -38,13 +38,17 @@
 		</Reporter>
 		
 		<input>
-			<dst treeName="tree" maxFiles="10" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
+			<dst treeName="tree" maxFiles="2" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
 		</input>
 
 		<RMCParams>StRMCParams.xml</RMCParams>
 		<correctRefMult zVertex="true" mcg="false" />
 
-		<splitRuns>15052075</splitRuns>
+		<timePeriods>
+			<!--<A min="1" max="24" />-->
+			<B min="25" max="157" />
+			<C min="158" max="735" />
+		</timePeriods>
 		
 		<eventCuts>
 			<vertexZ min="-100" max="100" />

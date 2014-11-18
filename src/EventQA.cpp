@@ -33,6 +33,13 @@ EventQA::EventQA( XmlConfig * config, string np, string fl, string jp) : TreeAna
     correctZ = config->getBool( np+"correctRefMult:zVertex", false );
     correctMCG = config->getBool( np+"correctRefMult:mcg", false );
     rmc = new RefMultCorrection( config->getString( np + "RMCParams" ) );
+
+    vector<string> children = cfg->childrenOf( np+"timePeriods" );
+	for ( int i =0; i < children.size(); i++ ){
+		ConfigRange * cr = new ConfigRange( cfg, children[ i ] );
+		period.push_back( cr );
+		logger->info( __FUNCTION__ ) << " Initializing Run range [ " << i << " ] = " << cr->toString() << endl;
+	}
 }
 /**
  * Destructor
@@ -52,6 +59,13 @@ EventQA::~EventQA(){
 void EventQA::preEventLoop(){
 	TreeAnalyzer::preEventLoop();
 	logger->info( __FUNCTION__ ) << endl;
+
+	for ( int i = 0; i < period.size(); i++ ){
+		book->clone( "refMultZ", "refMultZ_" + ts(i) );
+		book->clone( "refMultBBC", "refMultBBC_" + ts(i) );
+		book->clone( "refMultZDC", "refMultZDC_" + ts(i) );
+		book->clone( "refMultTOF", "refMultTOF_" + ts(i) );
+	}
 	
 }
 
@@ -91,10 +105,21 @@ void EventQA::analyzeEvent() {
 
 	book->fill( "tofMult", ri, pico->eventTofMult() );
 	book->fill( "refMult", ri, refMult );
+
+
 	book->fill( "refMultZ", vZ, refMult );
 	book->fill( "refMultBBC", pico->eventBBC(), refMult );
 	book->fill( "refMultZDC", pico->eventZDC(), refMult );
 	book->fill( "refMultTOF", pico->eventTofMult(), refMult );
+
+	int pi = periodIndex( ri );
+	if ( pi >= 0 ){
+		book->fill( "refMultZ_" + ts(pi), vZ, refMult );
+		book->fill( "refMultBBC_" + ts(pi), pico->eventBBC(), refMult );
+		book->fill( "refMultZDC_" + ts(pi), pico->eventZDC(), refMult );
+		book->fill( "refMultTOF_" + ts(pi), pico->eventTofMult(), refMult );	
+	}
+	
 
 
 	/**

@@ -33,9 +33,8 @@ void PlotQA::make(){
 
 	gStyle->SetOptStat( 0 );
 
-	//makeRunByRun();
-	//makeRefMultVersus();
-
+	makeRunByRun();
+	makeRefMultVersus();
 	makeZVertexProjections();
 
 	//reportBadRuns();
