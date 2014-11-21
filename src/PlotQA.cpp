@@ -325,17 +325,19 @@ TH1* PlotQA::isolate( TH1 * hIn, int x1, int x2 ){
 
 
 void PlotQA::makeZVertexProjections(){
+	logger->setLogLevel( Logger::llInfo  );
 
 	gStyle->SetOptFit( 1 );
 
 	double fX1 = cfg->getDouble( nodePath + "refMultZ.fit:x1", 100 );
 	double fX2 = cfg->getDouble( nodePath + "refMultZ.fit:x2", 300 );
 
-	TH2D * h2 = (TH2D*)inFile->Get( "refMultZ" );
+	TH2D * h2 = (TH2D*)inFile->Get( "refMultZ_1" );
 	TAxis * x = h2->GetXaxis();
 	vector<double> ranges = cfg->getDoubleVector( nodePath + "refMultZ.ranges" );
 
-	book->make1D( "fRes", "zVertex", ranges.size()-1, ranges[0]+5, ranges[ranges.size()-1]-5 );
+	logger->info(__FUNCTION__) << " Histogram range : ( " << ranges[0]+5 << ", " << ranges[ranges.size()-1]-5 << endl;
+	book->make1D( "fRes", "zVertex", ranges.size()-1, ranges[0], ranges[ranges.size()-1] );
 
 	for ( int i = 0; i < ranges.size() - 1; i++ ){
 		int x1 = x->FindBin( ranges[ i ] );
@@ -348,7 +350,6 @@ void PlotQA::makeZVertexProjections(){
 		book->add( name, h1 );
 
 		h1->SetTitle( ( dts( ranges[i] ) + " cm < z < " + dts( ranges[i+1] ) + " cm" ).c_str() );
-		
 		rpZ->newPage();
 		
 		book->style( name )->set( nodePath+"style.allZProjections" )->draw();
@@ -362,6 +363,7 @@ void PlotQA::makeZVertexProjections(){
 		book->get( name )->Fit( f1, "RQ" );
 		book->get( "fRes" )->SetBinContent( (i+1), f1->GetParameter( 2 ) );
 		double h = f1->GetParameter( 2 );
+		logger->info( __FUNCTION__ ) << "Step : " << i << endl;
 
 		TLine * hLine = new TLine( h, 0, h, f1->Eval( h )  );
 		hLine->SetLineColor( kRed );

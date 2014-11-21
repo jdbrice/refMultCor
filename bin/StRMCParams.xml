@@ -7,8 +7,11 @@
 	<year>14</year>
 	<energy>14.5</energy>
 	<runRange min="15046106" max="15070021"/>
-	<zVertex min="-70" max="70"/>
-	<zParameters>283.64, 0.215908, -0.0188956, 1.43681e-05, 7.03258e-06, -8.81265e-09, -7.01031e-10</zParameters>
+	<!--<zVertex min="-70" max="70"/>
+	<zParameters>283.651, 0.216445, -0.0189286, 1.3983e-05, 7.04998e-06, -8.76975e-09, -7.03716e-10</zParameters>-->
+
+	<zVertex min="-40" max="40" />
+	<zParameters>281.975, -0.0929595, 0.0010799, 0.000845434, -3.37528e-05, -4.33716e-07, 1.93842e-08 </zParameters>
 	<bins></bins>
 
 </config>

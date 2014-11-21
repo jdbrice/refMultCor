@@ -38,7 +38,7 @@
 		</Reporter>
 		
 		<input>
-			<dst treeName="tree" maxFiles="2" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
+			<dst treeName="tree" maxFiles="5" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
 		</input>
 
 		<RMCParams>StRMCParams.xml</RMCParams>
@@ -64,6 +64,7 @@
 		<histograms>
 
 			<events title="#Event" xBins="b.ei" yBins="b.events" />
+			<eventsZ title="#Events vs. Z" xBins="b.zVertex" />
 			<bbc title="BBC" xBins="b.ei" yBins="b.bbc" />
 			<zdc title="ZDC" xBins="b.ei" yBins="b.zdc" />
 			

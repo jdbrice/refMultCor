@@ -2,9 +2,9 @@
 <config>
 
 	<jobType>PlotQA</jobType>
-	<Logger>
+	<!--<Logger>
 		<logLevel>info</logLevel>
-	</Logger>
+	</Logger>-->
 
 	<PlotQA>
 		<Reporter>
@@ -19,7 +19,7 @@
 		<input>
 			<!--<data url="/Users/danielbrandenburg/bnl/local/data/RefMultHists/allRefMult.root" />-->
 			<!--<data url="/Users/danielbrandenburg/bnl/local/data/BadRunRemoveRefMult/allRefMult.root" />-->
-			<data url="/Users/danielbrandenburg/bnl/local/data/RefMultZCorr/allRefMult.root" />
+			<data url="/Users/danielbrandenburg/bnl/local/data/RefMultZCorr/out/allNov18.root" />
 		</input>
 		
 		<timePeriods>
@@ -63,13 +63,14 @@
 		</refMultVersus>
 
 		<refMultZ>
-			<ranges> -75, -65, -55, -45, -35, -25, -15, -5, 5, 15, 25, 35, 45, 55, 65, 75 </ranges>
+			<!--<ranges> -75, -65, -55, -45, -35, -25, -15, -5, 5, 15, 25, 35, 45, 55, 65, 75 </ranges>-->
+			<ranges> -45, -35, -25, -15, -5, 5, 15, 25, 35, 45 </ranges>
 			<Reporter>
 				<!-- For presentation formatted -->
 				<!--<output url="rpZQaRefMult.pdf" width="250" height="250" />-->
 				<output url="rpZQaRefMult.pdf" width="600" height="600" />
 			</Reporter>
-			<fit x1="250" x2="330"/>
+			<fit x1="230" x2="330"/>
 		</refMultZ>
 
 

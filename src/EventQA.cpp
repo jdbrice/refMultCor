@@ -84,6 +84,7 @@ void EventQA::analyzeEvent() {
 	double vZ = pico->eventVertexZ();
 
 	book->fill( "events", ri, 1 );
+	book->fill( "eventsZ", vZ);
 	book->fill( "bbc", ri, pico->eventBBC() );
 	book->fill( "zdc", ri, pico->eventZDC() );
 	book->fill( "nGlobal", ri, pico->eventNumGlobal() );
