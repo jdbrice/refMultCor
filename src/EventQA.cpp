@@ -15,7 +15,11 @@ EventQA::EventQA( XmlConfig * config, string np, string fl, string jp) : TreeAna
     cutVertexZ = new ConfigRange( cfg, np + "eventCuts.vertexZ", -200, 200 );
     cutVertexR = new ConfigRange( cfg, np + "eventCuts.vertexR", 0, 10 );
     cutVertexROffset = new ConfigPoint( cfg, np + "eventCuts.vertexROffset", 0.0, 0.0 );
-
+    /**
+     * Setup track cuts
+     */
+    cutEta = new ConfigRange( cfg, np + "trackCuts.eta", -10, 10 );
+    
 
     pico = new RefMultPicoDst( chain  );
 
@@ -52,6 +56,8 @@ EventQA::~EventQA(){
 	delete cutVertexZ;
 	delete cutVertexR;
 	delete cutVertexROffset;
+
+	delete cutEta;
 }
 
 
@@ -173,6 +179,10 @@ bool EventQA::keepEvent(){
 }
 
 bool EventQA::keepTrack( Int_t iTrack ){
+	double eta = pico->trackEta( iTrack );
+	
+	if ( eta < cutEta->min || eta > cutEta->max )
+		return false;
 
 	return true;
 }

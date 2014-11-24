@@ -50,6 +50,11 @@ protected:
 	ConfigPoint *cutVertexROffset;
 	ConfigRange *cutTofMatch;
 
+	/**
+	 * Track Cuts
+	 */
+	ConfigRange * cutEta;
+
 	
 	vector<int> rList;
 	vector<int> badRuns;
