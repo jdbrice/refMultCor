@@ -18,7 +18,7 @@ ROOTGLIBS     	= $(shell root-config --glibs)
 # Custom Project includes and libs
 # -lGui -lHtml -lGuiHtml
 includes		= -I../include -I$(JDB_LIB)/include/jdb -I. -I$(ROOTSYS)/include
-libraries 		= $(ROOTLIBS) -lXMLParser $(SYSLIBS)
+libraries 		= $(ROOTLIBS) $(SYSLIBS)
 staticLibs 		= $(JDB_LIB)/lib/libJDB.a
 
 cxx 		= g++ -std=c++0x
