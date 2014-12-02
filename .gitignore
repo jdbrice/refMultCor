@@ -10,15 +10,16 @@
 
 # Remove build files
 /src/*.o
-/src/rcp
+/src/rmc
 
 #remove items in bin used for managing different jobs
 /bin/*.dat
 /bin/*.pdf
 /bin/*.xml
-/bin/rcp
+/bin/rmc
 # but keep the sample config
 !/bin/config.xml
+
 
 /ParamFits
 /bin/img

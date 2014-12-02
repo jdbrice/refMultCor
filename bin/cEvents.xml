@@ -4,6 +4,9 @@
 	<jobType>EventQA</jobType>
 	<Logger>
 		<logLevel>info</logLevel>
+		<prefix>
+			<info />
+		</prefix>
 	</Logger>
 
 
@@ -38,7 +41,7 @@
 		</Reporter>
 		
 		<input>
-			<dst treeName="tree" maxFiles="5" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
+			<dst treeName="tree" maxFiles="-1" url="/Users/danielbrandenburg/bnl/local/data/RM14_015/"/>
 		</input>
 
 		<RMCParams>StRMCParams.xml</RMCParams>
@@ -52,8 +55,8 @@
 		
 		<eventCuts>
 			<vertexZ min="-100" max="100" />
-			<vertexR min="0.0" max="2.0" />
-			<!--<vertexROffset x="0" y="0.86" />-->
+			<!--<vertexR min="0.0" max="1.0" />
+			<vertexROffset x="0" y="0.86" />-->
 			<tofMult min="2" />
 		</eventCuts>
 		<trackCuts>
@@ -80,14 +83,15 @@
 			<vtxX title="vtxX" xBins="b.ei" yBins="b.vtxPerp" />
 			<vtxY title="vtxY" xBins="b.ei" yBins="b.vtxPerp" />
 			<vtxZ title="vtxZ" xBins="b.ei" yBins="b.vtx" />
+			<vtxXY title="vtxXY" xBins="b.vtxPerp" yBins="b.vtxPerp" />
 			
 			
 			<tofMult title="tof mult" xBins="b.ei" yBins="b.tofMult" />
-			<refMult title="<refMult>" xBins="b.ei" yBins="b.refMult" />
-			<refMultZ title="<refMult>" xBins="b.zVertex" yBins="b.refMult" />
-			<refMultBBC title="<refMult>" xBins="b.bbc" yBins="b.refMult" />
-			<refMultZDC title="<refMult>" xBins="b.zdc" yBins="b.refMult" />
-			<refMultTOF title="<refMult>" xBins="b.tofMult" yBins="b.refMult" />
+			<refMult title="refMult" xBins="b.ei" yBins="b.refMult" />
+			<refMultZ title="refMult" xBins="b.zVertex" yBins="b.refMult" />
+			<refMultBBC title="refMult" xBins="b.bbc" yBins="b.refMult" />
+			<refMultZDC title="refMult" xBins="b.zdc" yBins="b.refMult" />
+			<refMultTOF title="refMult" xBins="b.tofMult" yBins="b.refMult" />
 
 			<etaPrimary title="#eta" xBins="b.ei" yBins="b.eta" />
 			<ptPrimary title="pT of Primary Tracks" xBins="b.ei" yBins="b.pt" />

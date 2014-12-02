@@ -67,6 +67,9 @@ void EventQA::preEventLoop(){
 	logger->info( __FUNCTION__ ) << endl;
 
 	for ( int i = 0; i < period.size(); i++ ){
+
+		book->clone( "vtxXY", "vtxXY_" + ts(i) );
+
 		book->clone( "refMultZ", "refMultZ_" + ts(i) );
 		book->clone( "refMultBBC", "refMultBBC_" + ts(i) );
 		book->clone( "refMultZDC", "refMultZDC_" + ts(i) );
@@ -99,6 +102,7 @@ void EventQA::analyzeEvent() {
 	book->fill( "vtxX", ri, vX );
 	book->fill( "vtxY", ri, vY );
 	book->fill( "vtxZ", ri, vZ );
+	book->fill( "vtxXY", vX, vY );
 	
 	double vR = TMath::Sqrt( vX*vX + vY*vY );
 	book->fill( "vtxR", ri, vR );
@@ -121,6 +125,9 @@ void EventQA::analyzeEvent() {
 
 	int pi = periodIndex( ri );
 	if ( pi >= 0 ){
+
+		book->fill( "vtxXY_" +ts( pi ), vX, vY );
+
 		book->fill( "refMultZ_" + ts(pi), vZ, refMult );
 		book->fill( "refMultBBC_" + ts(pi), pico->eventBBC(), refMult );
 		book->fill( "refMultZDC_" + ts(pi), pico->eventZDC(), refMult );

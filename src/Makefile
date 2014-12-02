@@ -16,9 +16,10 @@ ROOTLIBS      	= $(shell root-config --libs)
 ROOTGLIBS     	= $(shell root-config --glibs)
 
 # Custom Project includes and libs
-includes		= -I../include -I../include/jdb -I. -I$(ROOTSYS)/include -I$(ROOTDEV)/include 
-libraries 		= 	$(ROOTLIBS) -lGui -lHtml -lGuiHtml $(CERNLIBS) $(SYSLIBS)
-staticLibs 		= jdbREF.a
+# -lGui -lHtml -lGuiHtml
+includes		= -I../include -I$(JDB_LIB)/include/jdb -I. -I$(ROOTSYS)/include
+libraries 		= $(ROOTLIBS) -lXMLParser $(SYSLIBS)
+staticLibs 		= $(JDB_LIB)/lib/libJDB.a
 
 cxx 		= g++ -std=c++0x
 flags 		= -Wall -g $(ROOTCFLAGS) $(includes) -Wno-write-strings -fno-inline 

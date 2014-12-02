@@ -101,7 +101,7 @@ void PlotQA::makeRunByRun(){
 		book->add( hNames[ i ], hP );
 
 		string stylePath = nodePath+"style."+hNames[ i ];
-		if ( cfg->nodeExists( stylePath ) )
+		if ( cfg->exists( stylePath ) )
 			book->style( hNames[ i ] )->set( stylePath ); 
 
 
@@ -148,7 +148,7 @@ void PlotQA::makeRefMultVersus(){
 		book->add( hNames[ i ], hP );
 
 		string stylePath = nodePath+"style."+hNames[ i ];
-		if ( cfg->nodeExists( stylePath ) )
+		if ( cfg->exists( stylePath ) )
 			book->style( hNames[ i ] )->set( stylePath ); 
 
 		book->style( hNames[ i ] )->set(nodePath+"style.allRefMultVersus" )->draw();
@@ -333,6 +333,27 @@ void PlotQA::makeZVertexProjections(){
 	double fX2 = cfg->getDouble( nodePath + "refMultZ.fit:x2", 300 );
 
 	TH2D * h2 = (TH2D*)inFile->Get( "refMultZ_1" );
+	
+	rpZ->newPage();
+		h2->SetTitle( "refMult vs. Z" );
+		h2->Draw("colz" );
+		gPad->SetLogz();
+	rpZ->savePage();
+
+	rpZ->newPage();
+		TH1D * hProj = h2->ProjectionX();
+		hProj->SetTitle( "total refmult vs. Z" );
+		hProj->Draw();
+	rpZ->savePage();
+
+	rpZ->newPage();
+		TH1D * hProf = h2->ProfileX();
+		hProf->SetTitle( "<refmult> vs. Z" );
+		hProf->Draw();
+	rpZ->savePage();
+
+	
+
 	TAxis * x = h2->GetXaxis();
 	vector<double> ranges = cfg->getDoubleVector( nodePath + "refMultZ.ranges" );
 
@@ -377,8 +398,8 @@ void PlotQA::makeZVertexProjections(){
 	}
 
 	rpZ->newPage();
-		TF1* p6 = new TF1( "pol6", "pol6", -65, 65 );
-		book->get("fRes")->Fit( p6, "QN" );
+		TF1* p6 = new TF1( "pol6", "pol6", cfg->getDouble( nodePath + "refMultZ.zFit:x1", -40 ), cfg->getDouble( nodePath + "refMultZ.zFit:x2", -40 ) );
+		book->get("fRes")->Fit( p6, "QNR" );
 		book->style( "fRes" )->set( nodePath+"style.zFit" )->draw();
 		p6->Draw("SAME");
 	cout << "zParams : " ;
