@@ -4,7 +4,7 @@ project = rmc
 # source suffix
 source = .cpp 
 # object files to make
-objects = rmc.o RefMultPicoDst.o EventQA.o PlotQA.o VtxSeed.o
+objects = rmc.o RefMultPicoDst.o EventQA.o PlotQA.o
 
 sources = $(wildcard *.cpp)
 headers = $(wildcard ../include/*.h)

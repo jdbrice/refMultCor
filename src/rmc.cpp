@@ -8,7 +8,6 @@ using namespace jdb;
 #include <iostream>
 #include "EventQA.h"
 #include "PlotQA.h"
-#include "VtxSeed.h"
 
 
 #include <exception>
@@ -39,10 +38,6 @@ int main( int argc, char* argv[] ) {
 			} else if ( "PlotQA" == job ){
 				PlotQA pqa( &config, "PlotQA." );
 				pqa.make();
-			} else if ( "VtxSeed" == job ){
-				VtxSeed vs( &config, "VtxSeed.", fileList, jobPrefix );
-				vs.make();
-
 			}
 
 		} catch ( exception &e ){
