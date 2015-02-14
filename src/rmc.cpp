@@ -8,7 +8,7 @@ using namespace jdb;
 #include <iostream>
 #include "EventQA.h"
 #include "PlotQA.h"
-#include "RunListMaker.h"
+#include "VtxSeed.h"
 
 
 #include <exception>
@@ -25,23 +25,24 @@ int main( int argc, char* argv[] ) {
 			XmlConfig config( argv[ 1 ] );
 			
 
-			if ( argc >= 4){
+			if ( argc >= 3)
 				fileList = (string) argv[ 2 ];
+				
+			if ( argc >= 4)
 				jobPrefix = (string) argv[ 3 ];
-			}
 
 			string job = config.getString( "jobType" );
 
 			if ( "EventQA" == job ){
 				EventQA eqa( &config, "EventQA.", fileList, jobPrefix );
-
 				eqa.make();  
 			} else if ( "PlotQA" == job ){
 				PlotQA pqa( &config, "PlotQA." );
 				pqa.make();
-			} else if ( "RunList" == job ){
-				RunListMaker rlm( &config, "RunListMaker.", fileList, jobPrefix );
-				rlm.make(); 
+			} else if ( "VtxSeed" == job ){
+				VtxSeed vs( &config, "VtxSeed.", fileList, jobPrefix );
+				vs.make();
+
 			}
 
 		} catch ( exception &e ){

@@ -14,14 +14,11 @@ EventQA::EventQA( XmlConfig * config, string np, string fl, string jp) : TreeAna
      */
     cutVertexZ = new ConfigRange( cfg, np + "eventCuts.vertexZ", -200, 200 );
     cutVertexR = new ConfigRange( cfg, np + "eventCuts.vertexR", 0, 10 );
-    cutVertexROffset = new ConfigPoint( cfg, np + "eventCuts.vertexROffset", 0.0, 0.0 );
+    cutTofMatch = new ConfigRange( cfg, np + "eventCuts.nTofMatch", 2, 100000);
     /**
      * Setup track cuts
      */
     cutEta = new ConfigRange( cfg, np + "trackCuts.eta", -10, 10 );
-    
-
-    pico = new RefMultPicoDst( chain  );
 
     logger->setClassSpace( "EventQA" );
 
@@ -55,7 +52,7 @@ EventQA::~EventQA(){
 	 */
 	delete cutVertexZ;
 	delete cutVertexR;
-	delete cutVertexROffset;
+	delete cutTofMatch;
 
 	delete cutEta;
 }
@@ -68,70 +65,51 @@ void EventQA::preEventLoop(){
 
 	for ( int i = 0; i < period.size(); i++ ){
 
-		book->clone( "vtxXY", "vtxXY_" + ts(i) );
-
-		book->clone( "refMultZ", "refMultZ_" + ts(i) );
-		book->clone( "refMultBBC", "refMultBBC_" + ts(i) );
-		book->clone( "refMultZDC", "refMultZDC_" + ts(i) );
-		book->clone( "refMultTOF", "refMultTOF_" + ts(i) );
+		book->clone( "refMultZ", "P_"+ ts(i)+"_refMultZ"  );
 	}
 	
 }
 
+
+void EventQA::analyzeEventBeforeCuts() {
+
+	rIndex = runIndex( ds->getUInt( "Event.mRunId" ) );
+	book->fill( "preNTofMatch", rIndex, ds->getInt( "Event.mNBTOFMatch") );
+	book->fill( "preVtxZ", rIndex, ds->get( "vZ") );
+	book->fill( "preVtxR", rIndex, ds->get( "vR") );
+	book->fill( "preNEvents", rIndex );
+}
+
 void EventQA::analyzeEvent() {
 	
-	UInt_t run = pico->eventRunId();
+	book->fill( "tofMult", rIndex, ds->get( "Event.mbTofTrayMultiplicity" ) );
+	book->fill( "nTofMatch", rIndex, ds->getInt( "Event.mNBTOFMatch") );
+	book->fill( "refMult", rIndex, ds->getInt( "refMult") );
+	book->fill( "vtxZ", rIndex, ds->get( "vZ") );
+	book->fill( "vtxX", rIndex, ds->get( "vX") );
+	book->fill( "vtxY", rIndex, ds->get( "vY") );
+	book->fill( "vtxR", rIndex, ds->get( "vR") );
 
-	int ri = runIndex( run );
-	bool br = badRun( run );
-	if ( ri < 0 || ri > nRuns || br ){
-		return;
-	}
+	book->fill( "bbc", rIndex, ds->getUInt( "Event.mBBCx") );
+	book->fill( "zdc", rIndex, ds->getUInt( "Event.mZDCx") );
+	book->fill( "nGlobal", rIndex, ds->getInt( "Event.mNumberOfGlobalTracks" ) );
+	//book->fill( "nPrimary", ri,  );
+	book->fill( "refMultZ", ds->get("vZ"), ds->get("refMult") );
+	book->fill( "refMultBBC", ds->get("Event.mBBCx"), ds->get("refMult") );
+	book->fill( "refMultZDC", ds->get("Event.mZDCx"), ds->get("refMult" ) );
+	book->fill( "refMultTOF", ds->get( "Event.mbTofTrayMultiplicity" ) , ds->get("refMult") );
 
-	double vX = pico->eventVertexX();
-	double vY = pico->eventVertexY();
-	double vZ = pico->eventVertexZ();
-
-	book->fill( "events", ri, 1 );
-	book->fill( "eventsZ", vZ);
-	book->fill( "bbc", ri, pico->eventBBC() );
-	book->fill( "zdc", ri, pico->eventZDC() );
-	book->fill( "nGlobal", ri, pico->eventNumGlobal() );
-	book->fill( "nPrimary", ri, pico->eventNumPrimary() );
-	book->fill( "nTofMatch", ri, pico->eventNumTofMatched() );
-	book->fill( "vtxX", ri, vX );
-	book->fill( "vtxY", ri, vY );
-	book->fill( "vtxZ", ri, vZ );
-	book->fill( "vtxXY", vX, vY );
+	book->fill( "nEvents", rIndex );
+	book->fill( "vtxXY", ds->get("vX"), ds->get("vY") );
 	
-	double vR = TMath::Sqrt( vX*vX + vY*vY );
-	book->fill( "vtxR", ri, vR );
-
-
-	int refMult = pico->eventRefMult();
+	/*int refMult = pico->eventRefMult();
 	if ( correctZ ){
 		refMult = rmc->refMult( refMult, vZ );
-	}
+	}*/
 
-
-	book->fill( "tofMult", ri, pico->eventTofMult() );
-	book->fill( "refMult", ri, refMult );
-
-
-	book->fill( "refMultZ", vZ, refMult );
-	book->fill( "refMultBBC", pico->eventBBC(), refMult );
-	book->fill( "refMultZDC", pico->eventZDC(), refMult );
-	book->fill( "refMultTOF", pico->eventTofMult(), refMult );
-
-	int pi = periodIndex( ri );
+	int pi = periodIndex( rIndex );
 	if ( pi >= 0 ){
-
-		book->fill( "vtxXY_" +ts( pi ), vX, vY );
-
-		book->fill( "refMultZ_" + ts(pi), vZ, refMult );
-		book->fill( "refMultBBC_" + ts(pi), pico->eventBBC(), refMult );
-		book->fill( "refMultZDC_" + ts(pi), pico->eventZDC(), refMult );
-		book->fill( "refMultTOF_" + ts(pi), pico->eventTofMult(), refMult );	
+		book->fill( "P_"+ts( pi )+"_refMultZ", ds->get("vZ"), ds->get("refMult") );
 	}
 	
 
@@ -139,7 +117,7 @@ void EventQA::analyzeEvent() {
 	/**
 	 * Analyze the tracks
 	 */
-	Int_t nTracks = pico->eventNumPrimary();
+	Int_t nTracks = ds->getInt( "Event.mNumberOfGlobalTracks" );
 
 	for ( Int_t iTrack = 0; iTrack < nTracks; iTrack ++ ){
 
@@ -149,44 +127,52 @@ void EventQA::analyzeEvent() {
 		analyzeTrack( iTrack );	
 
 	}
-
+	
 }
 
 
 void EventQA::analyzeTrack( Int_t iTrack ){
 
-	UInt_t run = pico->eventRunId();
-	int ri = runIndex( run );
-	book->fill( "ptPrimary", ri, pico->trackPt( iTrack ) );
-	book->fill( "etaPrimary", ri, pico->trackEta( iTrack ) );
-	book->fill( "pPrimary", ri, pico->trackP( iTrack ) );
-
-	if ( pico->trackP( iTrack ) < 2.0 ){
-		book->fill( "qxPrimary", ri, pico->trackPx( iTrack ) );
-		book->fill( "qyPrimary", ri, pico->trackPy( iTrack ) );
-	}
-
+	book->fill( "pxPrimary", rIndex, ds->get( "pX", iTrack ) );
+	book->fill( "pyPrimary", rIndex, ds->get( "pY", iTrack ) );
+	book->fill( "ptPrimary", rIndex, ds->get("pT") );
+	book->fill( "etaPrimary", rIndex, ds->get("eta", iTrack) );
+	book->fill( "pPrimary", rIndex, ds->get( "p", iTrack ) );
 }
 
 bool EventQA::keepEvent(){
 
-	double z = pico->eventVertexZ();
-	double x = pico->eventVertexX() + cutVertexROffset->x;
-	double y = pico->eventVertexY() + cutVertexROffset->y;
-	double r = TMath::Sqrt( x*x + y*y );
+	Int_t triggerWord = ds->getInt( "Event.mTriggerWord" );
+
+	if ( !(triggerWord & (1 << 2)) && !(triggerWord & (1 << 5))  )
+		return false;
+
+	double z = ds->get( "vZ" );
+	double x = ds->get( "vX" );
+	double y = ds->get( "vY" );
+	double r = ds->get( "vR" );
+	int nTofMatch = ds->getInt( "Event.mNBTOFMatch" );
 	
 	if ( z < cutVertexZ->min || z > cutVertexZ->max )
 		return false;
 	if ( r < cutVertexR->min || r > cutVertexR->max )
 		return false;
+	if ( nTofMatch < cutTofMatch->min )
+		return false;
 	
-	
-
 	return true;
 }
 
 bool EventQA::keepTrack( Int_t iTrack ){
-	double eta = pico->trackEta( iTrack );
+
+	double px = ds->get("pX", iTrack  );
+	double py = ds->get("pY", iTrack );
+	double pz = ds->get("pZ", iTrack );
+
+	if ( px== 0 && py == 0 && pz == 0 )
+		return false;
+
+	double eta = ds->get( "eta" );
 	
 	if ( eta < cutEta->min || eta > cutEta->max )
 		return false;
@@ -195,31 +181,62 @@ bool EventQA::keepTrack( Int_t iTrack ){
 }
 
 
-int EventQA::nRuns = 731;
+int EventQA::nRuns = 843;
 int EventQA::runList[] = {
+1000,
+15046073, 
+15046089, 
+15046094, 
+15046096, 
+15046102, 
+15046103, 
+15046104, 
+15046105, 
 15046106, 
+15046107, 
+15046108, 
+15046109, 
+15046110, 
+15046111, 
+15047004, 
 15047015, 
+15047016, 
 15047019, 
 15047021, 
+15047023, 
 15047024, 
+15047026, 
 15047027, 
 15047028, 
+15047029, 
 15047030, 
 15047039, 
 15047040, 
 15047041, 
+15047044, 
+15047047, 
 15047050, 
 15047052, 
 15047053, 
 15047056, 
+15047057, 
+15047061, 
+15047062, 
+15047063, 
+15047064, 
 15047065, 
 15047068, 
 15047069, 
+15047070, 
+15047071, 
+15047072, 
 15047074, 
 15047075, 
 15047082, 
+15047085, 
 15047086, 
 15047087, 
+15047093, 
 15047096, 
 15047097, 
 15047098, 
@@ -233,6 +250,7 @@ int EventQA::runList[] = {
 15048013, 
 15048014, 
 15048016, 
+15048017, 
 15048018, 
 15048019, 
 15048020, 
@@ -260,9 +278,11 @@ int EventQA::runList[] = {
 15048084, 
 15048085, 
 15048086, 
+15048087, 
 15048088, 
 15048089, 
 15048091, 
+15048092, 
 15048093, 
 15048094, 
 15048095, 
@@ -275,8 +295,18 @@ int EventQA::runList[] = {
 15049013, 
 15049014, 
 15049015, 
+15049016, 
 15049017, 
 15049018, 
+15049019, 
+15049020, 
+15049021, 
+15049022, 
+15049023, 
+15049025, 
+15049026, 
+15049027, 
+15049028, 
 15049030, 
 15049031, 
 15049032, 
@@ -285,26 +315,40 @@ int EventQA::runList[] = {
 15049038, 
 15049039, 
 15049040, 
+15049041, 
 15049074, 
 15049077, 
+15049083, 
 15049084, 
 15049085, 
 15049086, 
+15049087, 
 15049088, 
+15049089, 
+15049090, 
+15049091, 
 15049092, 
 15049093, 
 15049094, 
 15049096, 
 15049097, 
+15049098, 
+15049099, 
 15050001, 
 15050002, 
 15050003, 
+15050004, 
+15050005, 
 15050006, 
+15050010, 
+15050011, 
 15050012, 
 15050013, 
 15050014, 
 15050015, 
 15050016, 
+15051131, 
+15051132, 
 15051133, 
 15051134, 
 15051137, 
@@ -321,10 +365,12 @@ int EventQA::runList[] = {
 15052001, 
 15052004, 
 15052005, 
+15052006, 
 15052007, 
 15052008, 
 15052009, 
 15052010, 
+15052011, 
 15052014, 
 15052015, 
 15052016, 
@@ -359,14 +405,18 @@ int EventQA::runList[] = {
 15053001, 
 15053002, 
 15053003, 
+15053004, 
 15053005, 
 15053006, 
 15053007, 
 15053008, 
+15053009, 
 15053011, 
+15053012, 
 15053014, 
 15053015, 
 15053016, 
+15053017, 
 15053019, 
 15053020, 
 15053021, 
@@ -379,11 +429,15 @@ int EventQA::runList[] = {
 15053028, 
 15053029, 
 15053034, 
+15053035, 
+15053047, 
+15053048, 
 15053049, 
 15053050, 
 15053052, 
 15053053, 
 15053054, 
+15053055, 
 15053056, 
 15053057, 
 15053058, 
@@ -402,10 +456,25 @@ int EventQA::runList[] = {
 15054007, 
 15054008, 
 15054009, 
+15054010, 
+15054011, 
+15054012, 
+15054013, 
+15054014, 
+15054015, 
+15054016, 
+15054017, 
+15054018, 
+15054019, 
+15054020, 
+15054021, 
+15054023, 
+15054024, 
 15054025, 
 15054026, 
 15054028, 
 15054029, 
+15054030, 
 15054031, 
 15054037, 
 15054042, 
@@ -465,6 +534,7 @@ int EventQA::runList[] = {
 15056016, 
 15056017, 
 15056018, 
+15056019, 
 15056020, 
 15056021, 
 15056022, 
@@ -472,6 +542,7 @@ int EventQA::runList[] = {
 15056024, 
 15056025, 
 15056026, 
+15056027, 
 15056028, 
 15056036, 
 15056037, 
@@ -480,6 +551,7 @@ int EventQA::runList[] = {
 15056113, 
 15056114, 
 15056116, 
+15056117, 
 15056119, 
 15056123, 
 15056124, 
@@ -493,7 +565,10 @@ int EventQA::runList[] = {
 15057007, 
 15057008, 
 15057010, 
+15057011, 
 15057012, 
+15057013, 
+15057014, 
 15057015, 
 15057016, 
 15057017, 
@@ -513,6 +588,7 @@ int EventQA::runList[] = {
 15057052, 
 15057053, 
 15057054, 
+15057055, 
 15057056, 
 15057057, 
 15057058, 
@@ -526,6 +602,7 @@ int EventQA::runList[] = {
 15058003, 
 15058004, 
 15058005, 
+15058006, 
 15058007, 
 15058008, 
 15058009, 
@@ -583,10 +660,13 @@ int EventQA::runList[] = {
 15059029, 
 15059033, 
 15059037, 
+15059038, 
 15059040, 
 15059041, 
 15059042, 
 15059055, 
+15059057, 
+15059058, 
 15059059, 
 15059060, 
 15059061, 
@@ -616,7 +696,9 @@ int EventQA::runList[] = {
 15060021, 
 15060022, 
 15060023, 
+15060024, 
 15060027, 
+15060028, 
 15060029, 
 15060031, 
 15060032, 
@@ -663,6 +745,7 @@ int EventQA::runList[] = {
 15061025, 
 15061026, 
 15061027, 
+15061028, 
 15061034, 
 15061036, 
 15061037, 
@@ -715,6 +798,7 @@ int EventQA::runList[] = {
 15062041, 
 15062042, 
 15062066, 
+15062069, 
 15062070, 
 15062071, 
 15062075, 
@@ -728,6 +812,7 @@ int EventQA::runList[] = {
 15063010, 
 15063011, 
 15063012, 
+15063013, 
 15063014, 
 15063016, 
 15063017, 
@@ -795,7 +880,11 @@ int EventQA::runList[] = {
 15066025, 
 15066026, 
 15066064, 
+15066065, 
+15066070, 
 15066071, 
+15066072, 
+15066074, 
 15066076, 
 15066077, 
 15066082, 
@@ -846,6 +935,7 @@ int EventQA::runList[] = {
 15068005, 
 15068006, 
 15068007, 
+15068008, 
 15068009, 
 15068010, 
 15068012, 
@@ -860,6 +950,8 @@ int EventQA::runList[] = {
 15068026, 
 15068027, 
 15068028, 
+15068029, 
+15068030, 
 15068031, 
 15068032, 
 15068033, 
@@ -878,6 +970,8 @@ int EventQA::runList[] = {
 15068046, 
 15068047, 
 15068048, 
+15068049, 
+15069001, 
 15069002, 
 15069003, 
 15069004, 
@@ -906,6 +1000,7 @@ int EventQA::runList[] = {
 15069035, 
 15069036, 
 15069038, 
+15069039, 
 15069040, 
 15069042, 
 15069043, 
@@ -919,6 +1014,9 @@ int EventQA::runList[] = {
 15069051, 
 15070001, 
 15070002, 
+15070008, 
+15070009, 
+15070010, 
 15070013, 
 15070014, 
 15070015, 
@@ -929,5 +1027,3 @@ int EventQA::runList[] = {
 15070020, 
 15070021
 };
-
-

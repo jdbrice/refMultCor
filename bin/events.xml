@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<jobType>EventQA</jobType>
+	<Logger>
+		<logLevel>all</logLevel>
+		<prefix>
+			<info />
+		</prefix>
+	</Logger>
+
+
+	<EventQA>
+		<Logger>
+			<logLevel>info</logLevel>
+		</Logger>	
+
+		<Reporter>
+			<output url="" width="800" height="400" />
+		</Reporter>
+		
+		<DataSource treeName="PicoDst" url="/Users/danielbrandenburg/bnl/local/data/Run14/LBNL/" maxEvents="2000">
+			
+			<!-- Set all branches off -->
+			<BranchStatus status="0">*</BranchStatus>
+			<!-- Turn on only the ones you need -->
+			<BranchStatus status="1">
+				Event.*,
+				Track*
+			</BranchStatus>
+
+			<!-- Alias branches -->
+			<Alias name="vX" pointsTo="Event.mPrimaryVertex.mX1" />
+			<Alias name="vZ" pointsTo="Event.mPrimaryVertex.mX3" />
+			<Alias name="pX" pointsTo="Tracks.mPMomentum.mX1" />
+			<Alias name="pY" pointsTo="Tracks.mPMomentum.mX2" />
+			<Alias name="pZ" pointsTo="Tracks.mPMomentum.mX3" />
+		
+			<!-- Make evaluated leaves to provide variables at runtime -->
+			<EvaluatedLeaf name="vY" value="[0] + 0.89" p0="Event.mPrimaryVertex.mX2" />
+			<EvaluatedLeaf name="refMult" value="[0] + [1]" p0="Event.mRefMultPos" p1="Event.mRefMultNeg" />
+			<EvaluatedLeaf name="vR" value="TMath::Sqrt( [0]*[0] + [1]*[1] )" p0="vX" p1="vY" />
+
+			<EvaluatedLeaf name="pT" value="TMath::Sqrt( [0]*[0] + [1]*[1] )" p0="pX" p1="pY" />
+
+			<EvaluatedLeaf name="p" value="TMath::Sqrt( [0]*[0] + [1]*[1] + [2]*[2] )" p0="pX" p1="pY" p2="pZ" />
+
+			<EvaluatedLeaf name="eta" value="TMath::ASinH( [0]/[1] )" p0="pZ" p1="pT" />
+
+			
+		</DataSource>
+
+		<RMCParams>StRMCParams.xml</RMCParams>
+		<correctRefMult zVertex="true" mcg="false" />
+
+		<timePeriods>
+			<!--<A min="1" max="24" />-->
+			<B min="25" max="211" />
+			<C min="211" max="842" />
+		</timePeriods>
+		
+		<eventCuts>
+			<vertexZ min="-70" max="70" />
+			<vertexR min="0.0" max="1.0" />
+			<nTofMatch min="2" />
+		</eventCuts>
+		<trackCuts>
+			<eta min="-0.5" max="0.5" />
+		</trackCuts>
+
+		<output>
+			<data>refMult.root</data>
+		</output>
+
+		<histograms>
+			<!--<Histo name="triggers" title="triggers" />-->
+			<Histo name="nEvents" title="#Events" xBins="b.ei" />
+			<Histo name="preNEvents" title="#Events" xBins="b.ei" />
+			<bbc title="BBC" xBins="b.ei" yBins="b.bbc" />
+			<zdc title="ZDC" xBins="b.ei" yBins="b.zdc" />
+
+			<nGlobal title="# of global tracks" xBins="b.ei" yBins="b.nGlobalTracks" />
+			<nPrimary title="# of Primary tracks" xBins="b.ei" yBins="b.nTracks" />
+			<nTofMatch title="nTofMatch" xBins="b.ei" yBins="b.refMult" />
+			<preNTofMatch title="nTofMatch : Before Cuts" xBins="b.ei" yBins="b.refMult" />
+			
+			<vtxR title="vtxR" xBins="b.ei" yBins="b.vtxR" />
+			<vtxX title="vtxX" xBins="b.ei" yBins="b.vtxPerp" />
+			<vtxY title="vtxY" xBins="b.ei" yBins="b.vtxPerp" />
+			<vtxXY title="vtxXY" xBins="b.vtxPerp" yBins="b.vtxPerp" />
+			<shiftedVtxR title="Shifted vtxR" xBins="b.ei" yBins="b.vtxR" />
+			<preVtxR title="Shifted vtxR : Before Cuts" xBins="b.ei" yBins="b.preVtxR" />
+			<shiftedVtxX title="Shifted vtxX" xBins="b.ei" yBins="b.vtxPerp" />
+			<shiftedVtxY title="Shifted vtxY" xBins="b.ei" yBins="b.vtxPerp" />
+			<shiftedVtxXY title="Shifted vtxXY" xBins="b.vtxPerp" yBins="b.vtxPerp" />
+			<preShiftedVtxXY title="Shifted vtxXY : Before Cuts" xBins="b.vtxPerp" yBins="b.vtxPerp" />
+
+			<vtxZ title="vtxZ" xBins="b.ei" yBins="b.zVertex" />
+			<preVtxZ title="vtxZ : Before Cuts" xBins="b.ei" yBins="b.zVertex" />
+			<vpdVtxZ title="VPD vtxZ" xBins="b.ei" yBins="b.zVertex" />
+			<diffVpdTpc title="VPD_{Z} - TPC_{Z}" xBins="b.ei" yBins="b.deltaZ" />
+			<vtxZX title="vtxZ vs vtxX" xBins="b.zVertex" yBins="b.vtxPerp"  />
+			<vtxZY title="vtxZ vs vtxY" xBins="b.zVertex" yBins="b.vtxPerp" />
+			
+			<tofMult title="tof mult" xBins="b.ei" yBins="b.tofMult" />
+			<refMult title="refMult" xBins="b.ei" yBins="b.refMult" />
+			<refMultZ title="refMult" xBins="b.zVertex" yBins="b.refMult" />
+			<refMultBBC title="refMult" xBins="b.bbc" yBins="b.refMult" />
+			<refMultZDC title="refMult" xBins="b.zdc" yBins="b.refMult" />
+			<refMultTOF title="refMult" xBins="b.tofMult" yBins="b.refMult" />
+
+			<etaPrimary title="#eta" xBins="b.ei" yBins="b.eta" />
+			<ptPrimary title="pT of Primary Tracks" xBins="b.ei" yBins="b.pt" />
+
+			<pPrimary title="momentum" xBins="b.ei" yBins="b.pt" />
+
+			<pxPrimary title="P_{x}" xBins="b.ei" yBins="b.pt" />
+			<pyPrimary title="P_{y}" xBins="b.ei" yBins="b.pt" />
+			<pzPrimary title="P_{z}" xBins="b.ei" yBins="b.pt" />
+
+			<prePzPrimary title="P_{z}" xBins="b.ei" yBins="b.pt" />
+			
+		</histograms>
+
+	</EventQA>
+
+	<b hide="true" >
+		<ei width="1" min="0.5" max="900.5" />
+
+		<events width="1" min="0" max="2" />
+		<pt width="0.05" min="0.1" max="10.0" />
+		<phi width="0.01" min="-6" max="6.0" />
+		<bbc nBins="200" min="0" max="5000"/>
+		<zdc width="1" min="0" max="100"/>
+		<nTracks width="1" min="0" max="1450"/>
+		<nGlobalTracks width="1" min="0" max="2250"/>
+		<vtxPerp width=".01" min="-1.1" max="1.1"/>
+		<vtx width="1" min="-100" max="100"/>
+		<vtxR width=".01" min="0" max="1.1"/>
+		<preVtxR width=".01" min="0" max="4.0"/>
+		<dca width=".01" min="-6" max="6"/>
+		<dcaMag width=".01" min="0" max="15"/>
+		<zVertex width="1" min="-200" max="200"/>
+		<deltaZ width=".2" min="-30" max="30"/>
+		<eta width=".01" min="-3" max="3"/>
+		<tofMult width="2" min="0" max="1500" />
+		<refMult width="1" min="0" max="425" />
+		
+		<q width="0.005" min="0.1" max="2.1" />
+	</b>
+
+		
+
+	
+
+</config>

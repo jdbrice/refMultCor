@@ -22,7 +22,11 @@ protected:
 	vector<ConfigRange*> period;
 
 	map<int, bool> badRuns;
-	const static int nRuns = 733;
+	const static int nRuns = 842;
+
+	string triggerOfInterest;
+
+	bool showBadRuns;
 
 // public member methods
 public:
@@ -38,6 +42,10 @@ protected:
 	void makeRunByRun();
 	void makeRefMultVersus();
 	//static UInt_t runList[];
+	//
+	void makeProjectedQA();
+	void makeColorfulQA();
+	void makePeriodComparisonQA();
 	
 	TH1D* meanSliceX( TH2D * h2 );
 	TH1D* entrySliceX( TH2D * h2 );
@@ -45,6 +53,7 @@ protected:
 
 	TH1D* badRunsHist( TH1D* h, string name );
 	void drawWithAcceptanceBands( TProfile* h, double nSig, ConfigRange* cr );
+	void drawWithPol0( TProfile* h, ConfigRange* cr );
 	void findBadRuns( TProfile* h, double nSig, ConfigRange* cr );
 	void findBadRunsFromEvents( TH1D* h, double nEvents );
 
@@ -52,6 +61,8 @@ protected:
 	double rmsForPeriod( TProfile * h, ConfigRange * cr );
 
 	void reportBadRuns();
+
+	void makeBeamSpotCalibration();
 
 	/**
 	 * For zVertex 

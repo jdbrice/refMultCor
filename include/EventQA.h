@@ -65,6 +65,8 @@ protected:
 
 	vector<ConfigRange*> period;
 
+	Int_t rIndex;
+
 
 public:
 	EventQA( XmlConfig * config, string nodePath, string fl, string jp );
@@ -99,6 +101,7 @@ protected:
 	 * Analyze Event
 	 */
 	virtual void analyzeEvent( );
+	virtual void analyzeEventBeforeCuts( );
 
 	/**
 	 * Performs event based cuts

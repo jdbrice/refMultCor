@@ -17,6 +17,11 @@
 /bin/*.pdf
 /bin/*.xml
 /bin/rmc
+/bin/auau15
+/bin/TriggerPlots
+/bin/vtxSeed
+/bin/*.lis
+/products/
 # but keep the sample config
 !/bin/config.xml
 

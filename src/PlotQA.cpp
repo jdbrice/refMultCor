@@ -1,15 +1,16 @@
 #include "PlotQA.h"
 #include "EventQA.h"
 
+#include "TGaxis.h"
 #include "RefMultCorrection.h"
 
 PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 
-	//
+	Logger::setGlobalLogLevel( Logger::llAll );
 	logger->setClassSpace( "PlotQA" );
 	logger->info( __FUNCTION__ ) << endl;
 
-	logger->info(__FUNCTION__) << "Making Z Vertex Report from " << np+"refMultZ.Reporter" << endl;
+	logger->info( __FUNCTION__) << "Making Z Vertex Report from " << np+"refMultZ.Reporter" << endl;
 	rpZ = new Reporter( cfg, np+"refMultZ.Reporter." );
 
 	vector<string> children = cfg->childrenOf( np+"timePeriods" );
@@ -19,7 +20,9 @@ PlotQA::PlotQA( XmlConfig * config, string np ) : HistoAnalyzer( config, np ){
 		logger->info( __FUNCTION__ ) << " Initializing Run range [ " << i << " ] = " << cr->toString() << endl;
 	}
 
+	triggerOfInterest = cfg->getString( np+"TriggerOfInterest:name",  "");
 	
+	showBadRuns = cfg->getBool( np+"badRunCuts:showBadRuns", true );
 
 }
 
@@ -33,11 +36,137 @@ void PlotQA::make(){
 
 	gStyle->SetOptStat( 0 );
 
-	makeRunByRun();
-	makeRefMultVersus();
-	makeZVertexProjections();
+	if ( cfg->getBool( nodePath+"ProjectedQA:make", true ) )
+		makeProjectedQA();
+	
+	if ( cfg->getBool( nodePath+"runByRun:make", true ) )
+		makeRunByRun();
 
-	//reportBadRuns();
+	makePeriodComparisonQA();
+	
+	if ( cfg->getBool( nodePath+"refMultVersus:make", true ) )
+		makeRefMultVersus();
+
+	if ( cfg->getBool( nodePath+"refMultZ:make", true ) )
+		makeZVertexProjections();
+	
+	if ( cfg->getBool( nodePath+"ColorfulQA:make", true ) )
+		makeColorfulQA();
+
+
+
+	reportBadRuns();
+
+	//makeBeamSpotCalibration();
+
+}
+
+
+void PlotQA::makeProjectedQA(){
+	logger->info( __FUNCTION__ ) << "{" << endl;
+	vector<string> hNames = cfg->getStringVector( nodePath + "ProjectedQA" );
+	book->cd();
+
+	for ( int i = 0; i < hNames.size(); i++ ){
+	
+		TH2D * h2 = (TH2D*)inFile->Get( (triggerOfInterest + hNames[ i ]).c_str() );
+		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
+
+		string name = hNames[ i ] + "_allRuns"; 
+		TH1D* h1 = (TH1D*)(h2->ProjectionY( "_tmp" ) ->Clone( name.c_str() ));
+		book->add( name, h1 );
+
+		reporter->newPage();
+		book->style( name )->
+			set( nodePath + "style.ProjectedQA" )->						// set the shared style
+			set( nodePath + "style.ProjectedQA." + hNames[ i ] )->		// set the style for this one
+			draw();
+		reporter->savePage();
+
+		reporter->saveImage( "img/proj/" + hNames[ i ] + ".pdf" );
+
+	}
+
+
+}
+
+
+void PlotQA::makeColorfulQA(){
+	logger->info( __FUNCTION__ ) << "{" << endl;
+	vector<string> hNames = cfg->getStringVector( nodePath + "ColorfulQA" );
+	book->cd();
+
+	for ( int i = 0; i < hNames.size(); i++ ){
+	
+		TH2D * h2 = (TH2D*)inFile->Get( (triggerOfInterest + hNames[ i ]).c_str() );
+		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
+
+		int rbX = cfg->getInt( nodePath + "style.ColorfulQA.Rebinning." + hNames[ i ] + ":x", 1 );
+		int rbY = cfg->getInt( nodePath + "style.ColorfulQA.Rebinning." + hNames[ i ] + ":y", 1 );
+
+		string name = hNames[ i ] + "_color"; 
+		book->add( name, (h2->RebinX( rbX )->RebinY( rbY )) );
+
+		reporter->newPage();
+		book->style( name )->
+			set( nodePath + "style.ColorfulQA" )->						// set the shared style
+			set( nodePath + "style.ColorfulQA." + hNames[ i ] )->		// set the style for this one
+			draw();
+		reporter->savePage();
+
+	}
+
+
+}
+
+void PlotQA::makePeriodComparisonQA(){
+
+	logger->info( __FUNCTION__ ) << "{" << endl;
+	vector<string> hNames = cfg->getStringVector( nodePath + "PeriodComparison" );
+	book->cd();
+
+	gStyle->SetOptStat(111);
+
+	for ( int i = 0; i < hNames.size(); i++ ){
+	
+		TH2D * h2 = (TH2D*)inFile->Get( (triggerOfInterest + hNames[ i ]).c_str() );
+		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
+
+
+		string name = hNames[ i ] + "_comp"; 
+		book->add( name, h2 );
+
+		reporter->newPage();
+
+		for ( int j = 0; j <period.size(); j++ ){
+
+			ConfigRange * cr = period[ j ];
+			TH1D * hp = h2->ProjectionY( (name+"_py"+ts(j)).c_str(), cr->min, cr->max );
+			
+			//hp->Scale( 1.0 / hp->Integral() );
+
+			book->add( name+"_py"+ts(j), hp );
+
+			string draw="same";
+			int lc = kRed;
+			if ( !j )
+				draw="";
+			if ( !j )
+				lc = kBlue;
+
+			book->style( name+"_py"+ts(j) )->
+			set( nodePath + "style.ComparisonQA" )->						// set the shared style
+			set( nodePath + "style.ComparisonQA." + hNames[ i ] )->		// set the style for this one
+			set( "draw", draw)->set( "lineColor", lc )->
+			draw();
+			
+			//reporter->next();
+			
+
+		}
+		reporter->savePage();
+
+	}
 
 }
 
@@ -47,8 +176,12 @@ void PlotQA::makeRunByRun(){
 
 	book->cd();
 
-	TH1D * hEvents = entrySliceX((TH2D*)inFile->Get( "events" ));
+	//TH1D * hEvents = entrySliceX((TH2D*)inFile->Get( "events" ));
+	//book->add( "nEvents", hEvents );
+	TH1D* hEvents = (TH1D*)inFile->Get( (triggerOfInterest + "nEvents").c_str() );
 	book->add( "nEvents", hEvents );
+	
+
 	
 	findBadRunsFromEvents( hEvents, cfg->getInt( nodePath+"badRunCuts.events:min" ) );
 
@@ -58,37 +191,54 @@ void PlotQA::makeRunByRun(){
 	/**
 	 * Find all the bad runs
 	 */
-	for ( int i = 0; i < hNames.size(); i++ ){
-	
-		TH2D * h2 = (TH2D*)inFile->Get( hNames[ i ].c_str() );
-		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
+	for ( int j = 0; j < 3; j++ ){
+		for ( int i = 0; i < hNames.size(); i++ ){
 		
-		TProfile * hP = (TProfile*)h2->ProfileX()->Clone( hNames[ i ].c_str() );
-		double sigma = cfg->getDouble( nodePath+"badRunCuts."+hNames[i]+":sigma", -1 );
-		if ( sigma > 0  ){
-			for ( int j = 0; j < period.size(); j++ ){	
-				findBadRuns( hP, sigma, period[ j ] );
+			TH2D * h2 = (TH2D*)inFile->Get( (triggerOfInterest + hNames[ i ]).c_str() );
+			logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
+			
+			TProfile * hP = (TProfile*)h2->ProfileX()->Clone( hNames[ i ].c_str() );
+			double sigma = cfg->getDouble( nodePath+"badRunCuts."+hNames[i]+":sigma", -1 );
+			if ( sigma > 0  ){
+				for ( int j = 0; j < period.size(); j++ ){	
+					findBadRuns( hP, sigma, period[ j ] );
+				}
 			}
 		}
-
 	}
 
 	/**
 	 * Events
 	 */
 	reporter->newPage();
-	book->style( "nEvents" )->set( nodePath+"style.allRunByRun" )->set("domain", 1, nRuns+5 )->draw();
-	TH1D * bRuns = badRunsHist( (TH1D*)book->get( "nEvents" ), "badRuns_nEvents" );
-	book->add( "badRuns_nEvents", bRuns );
-	book->style( "badRuns_nEvents" )->set( nodePath+"style.bad" )->draw();
+	book->style( "nEvents" )->set( nodePath+"style.allRunByRun" )->
+	set("domain", 1, nRuns+5 )->set( nodePath+"style.nEvents")->draw();
+	if ( showBadRuns ){
+		TH1D * bRuns = badRunsHist( (TH1D*)book->get( "nEvents" ), "badRuns_nEvents" );
+		book->add( "badRuns_nEvents", bRuns );
+		book->style( "badRuns_nEvents" )->set( nodePath+"style.bad" )->draw();	
+
+		int minEvents = cfg->getInt( nodePath+"badRunCuts.events:min" );
+		TLine * evtLine = new TLine( 1, minEvents, nRuns, minEvents );
+
+		evtLine->SetLineColor( kRed );
+		evtLine->SetLineWidth( 3 );
+
+		evtLine->Draw();
+
+	}
 	reporter->savePage();
 	reporter->saveImage( "img/Events.pdf" );
+
+	
+
+
 	/**
 	 * Draw everything
 	 */
 	for ( int i = 0; i < hNames.size(); i++ ){
 	
-		TH2D * h2 = (TH2D*)inFile->Get( hNames[ i ].c_str() );
+		TH2D * h2 = (TH2D*)inFile->Get( (triggerOfInterest + hNames[ i ]).c_str() );
 		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
 
 		
@@ -104,17 +254,39 @@ void PlotQA::makeRunByRun(){
 		if ( cfg->exists( stylePath ) )
 			book->style( hNames[ i ] )->set( stylePath ); 
 
-
+		reporter->cd(0);
 		book->style( hNames[ i ] )->set(nodePath+"style.allRunByRun" )->draw();
+		book->style( hNames[ i ] )->set( "domain", 1, nRuns+5 );
+		reporter->update(); // needed to make root functions know the histo height
+		double ymax = gPad->GetUymax();
+		
+		
+
+
+		
+		
+		int dMin = cfg->getInt( nodePath + "DayRange:min", 0 );
+		int dMax = cfg->getInt( nodePath + "DayRange:max", 100 ) + 1;
+		TGaxis *axis = new TGaxis( 0, ymax, nRuns, ymax, dMin, dMax, 510, "+R" );
+
+		if ( cfg->getBool( nodePath + "rbrPol0." + hNames[ i ], false ) ){
+			for ( int j = 0; j < period.size(); j++ )
+				drawWithPol0( hP, period[ j ] );
+		}
 		double sigma = cfg->getDouble( nodePath+"badRunCuts."+hNames[i]+":sigma", -1 );
 		if ( sigma > 0 ){
 			for ( int j = 0; j < period.size(); j++ )
 				drawWithAcceptanceBands( hP, sigma, period[ j ] );
 		}
+		if ( showBadRuns ){
+			TH1D * bRuns = badRunsHist( hP, "badRuns_"+hNames[ i ] );
+			book->add( "badRuns_"+hNames[ i ], bRuns );
+			book->style( "badRuns_"+hNames[ i ] )->set( nodePath+"style.bad" )->draw();
+		}
+
 		
-		TH1D * bRuns = badRunsHist( hP, "badRuns_"+hNames[ i ] );
-		book->add( "badRuns_"+hNames[ i ], bRuns );
-		book->style( "badRuns_"+hNames[ i ] )->set( nodePath+"style.bad" )->draw();
+		//axis->SetTitle( "Day#" );
+		//axis->Draw();
 
 		reporter->savePage();
 		reporter->saveImage( "img/" + hNames[ i ] + ".pdf" );
@@ -137,7 +309,7 @@ void PlotQA::makeRefMultVersus(){
 
 	for ( int i = 0; i < hNames.size(); i++ ){
 	
-		TH2D * h2 = (TH2D*)inFile->Get( hNames[ i ].c_str() );
+		TH2D * h2 = (TH2D*)inFile->Get( (triggerOfInterest + hNames[ i ]).c_str() );
 		if ( !h2 )
 			continue;
 		logger->info( __FUNCTION__ ) << "Processing " << hNames[ i ] << endl;
@@ -165,7 +337,7 @@ void PlotQA::makeRefMultVersus(){
 TH1D* PlotQA::badRunsHist( TH1D* hIn, string name ){
 
 	TH1D* h = (TH1D*)hIn->Clone( name.c_str() );
-	for ( int i = 1; i < nRuns; i++ ){
+	for ( int i = 1; i <= nRuns+5; i++ ){
 		if ( !badRuns[ i ] ){
 			h->SetBinContent( i, 0 );
 			h->SetBinError( i, 0 );
@@ -185,9 +357,9 @@ void PlotQA::drawWithAcceptanceBands( TProfile* pr, double nSig, ConfigRange * c
 	pr->GetXaxis()->SetRange( cr->min, cr->max );
 	double m = meanForPeriod( pr, cr );
 	double rms = rmsForPeriod(pr, cr) * nSig;
-	logger->info(__FUNCTION__) << "Sig = " << pr->GetRMS(2) << endl;
+	logger->info(__FUNCTION__) << "rms * " << nSig <<  " = " << rms << endl;
 
-	pr->GetXaxis()->SetRange( 1, nRuns );
+	pr->GetXaxis()->SetRange( 1, nRuns+5 );
 	//pr->GetYaxis()->SetRangeUser( m - rms * 1.5, m + rms * 1.5  );
 
 	if ( nSig > 0 ){
@@ -208,6 +380,28 @@ void PlotQA::drawWithAcceptanceBands( TProfile* pr, double nSig, ConfigRange * c
 		lb->Draw();
 		ub->Draw();	
 	}
+	
+}
+
+void PlotQA::drawWithPol0( TProfile* pr, ConfigRange * cr ){
+	
+
+	pr->GetXaxis()->SetRange( cr->min, cr->max );
+	double m = meanForPeriod( pr, cr );
+
+	pr->GetXaxis()->SetRange( 1, nRuns );
+	//pr->GetYaxis()->SetRangeUser( m - rms * 1.5, m + rms * 1.5  );
+
+
+	int x1 = cr->min;
+	int x2 = cr->max;
+	TLine * c = new TLine( x1, m, x2, m );
+
+	c->SetLineColor( kBlue );
+	c->SetLineWidth( 3 );
+
+
+	c->Draw();
 	
 }
 
@@ -235,7 +429,7 @@ void PlotQA::findBadRunsFromEvents( TH1D *h, double nEvents ){
 	for ( int i = 1; i <= nRuns; i++ ){
 		double val = h->GetBinContent( i );
 		if ( val < nEvents ){
-			logger->info(__FUNCTION__) << " found bad run in " << h->GetTitle() << " run # " << i << endl;
+			logger->info(__FUNCTION__) << " found bad run in " << h->GetTitle() << " run # " << i << " with " << val << " events" << endl;
 			badRuns[ i ] = true;
 		}
 	}
@@ -247,13 +441,13 @@ void PlotQA::findBadRunsFromEvents( TH1D *h, double nEvents ){
  * @param  h2 input 2D
  * @return    1d histo
  */
-TH1D* PlotQA::meanSliceX( TH2D* h2 ){
+/*TH1D* PlotQA::meanSliceX( TH2D* h2 ){
 
 	TH1D * h1;
 	int nBinsX = h2->GetNbinsX();
 
 	TAxis *x = h2->GetXaxis();
-	double x1, x2;
+	//double x1, x2;
 	h1 = new TH1D( ((string)"_"+(string)h2->GetTitle()).c_str(), ("<"+(string)h2->GetTitle()+">").c_str(), nBinsX, x->GetXmin(), x->GetXmax() );
 	for ( int i = 1; i <= nBinsX; i++ ){
 
@@ -275,7 +469,7 @@ TH1D* PlotQA::meanSliceX( TH2D* h2 ){
 
 	return h1;
 }
-
+*/
 
 TH1D* PlotQA::entrySliceX( TH2D * h2 ){
 
@@ -332,23 +526,21 @@ void PlotQA::makeZVertexProjections(){
 	double fX1 = cfg->getDouble( nodePath + "refMultZ.fit:x1", 100 );
 	double fX2 = cfg->getDouble( nodePath + "refMultZ.fit:x2", 300 );
 
-	TH2D * h2 = (TH2D*)inFile->Get( "refMultZ_1" );
-	
+	TH2D * h2 = (TH2D*)inFile->Get(  (triggerOfInterest + "refMultZ").c_str() );
+	book->add( "refMultVsZVertex", h2 );
 	rpZ->newPage();
-		h2->SetTitle( "refMult vs. Z" );
-		h2->Draw("colz" );
-		gPad->SetLogz();
+		book->style( "refMultVsZVertex" )->set( nodePath + "style.refMultVsZVertex" )->draw();
 	rpZ->savePage();
 
 	rpZ->newPage();
 		TH1D * hProj = h2->ProjectionX();
-		hProj->SetTitle( "total refmult vs. Z" );
+		hProj->SetTitle( "Total RefMult vs. Z_{TPC}" );
 		hProj->Draw();
 	rpZ->savePage();
 
 	rpZ->newPage();
 		TH1D * hProf = h2->ProfileX();
-		hProf->SetTitle( "<refmult> vs. Z" );
+		hProf->SetTitle( "<RefMult> vs. Z_{TPC}" );
 		hProf->Draw();
 	rpZ->savePage();
 
@@ -357,7 +549,7 @@ void PlotQA::makeZVertexProjections(){
 	TAxis * x = h2->GetXaxis();
 	vector<double> ranges = cfg->getDoubleVector( nodePath + "refMultZ.ranges" );
 
-	logger->info(__FUNCTION__) << " Histogram range : ( " << ranges[0]+5 << ", " << ranges[ranges.size()-1]-5 << endl;
+	logger->info(__FUNCTION__) << " Histogram range : ( " << ranges[0] << ", " << ranges[ranges.size()-1] << " ) " << endl;
 	book->make1D( "fRes", "zVertex", ranges.size()-1, ranges[0], ranges[ranges.size()-1] );
 
 	for ( int i = 0; i < ranges.size() - 1; i++ ){
@@ -366,9 +558,17 @@ void PlotQA::makeZVertexProjections(){
 		logger->info(__FUNCTION__) << "Project ( " << ranges[ i ] << " cm, " << ranges[ i+1] << "cm ) -> ( " << x1 << ", " << x2 << " ) " << endl;
 
 
+
 		string name = ("refMult_" + dts( ranges[i] ));
-		TH1D * h1 = h2->ProjectionY( name.c_str(), x1, x2 );
+		TH1D * h1 = h2->ProjectionY( name.c_str(), x1, x2-1 );
 		book->add( name, h1 );
+
+		/* shows the 2d histo for this projection
+		rpZ->newPage();
+			x->SetRange( x1, x2 - 1 );
+			x->SetNdivisions( 501);
+			h2->Draw("colz");
+		rpZ->savePage();*/
 
 		h1->SetTitle( ( dts( ranges[i] ) + " cm < z < " + dts( ranges[i+1] ) + " cm" ).c_str() );
 		rpZ->newPage();
@@ -415,6 +615,30 @@ void PlotQA::makeZVertexProjections(){
 
 }
 
+void PlotQA::makeBeamSpotCalibration(){
+
+
+
+	TH2D * vtxX = (TH2D*)inFile->Get( "vtxX" );
+	TProfile * profX = (TProfile*)vtxX->ProfileX()->Clone( "profVtxX" );
+	TH2D * vtxY = (TH2D*)inFile->Get( "vtxY" );
+	TProfile * profY = (TProfile*)vtxY->ProfileX()->Clone( "profVtxY" );
+
+	int b1 = 1;
+	int b2 = vtxX->GetNbinsX();
+
+	for ( int i = b1; i <= b2; i++ ){
+		
+		double mX = profX->GetBinContent( i );
+		double mY = profY->GetBinContent( i );
+		cout << "<VertexOffset x=\"" << mX << "\" y=\"" << mY << "\" />" << endl;
+
+	}
+
+
+
+}
+
 
 double PlotQA::fTail( Double_t * x, Double_t * par ){
 
@@ -429,31 +653,67 @@ double PlotQA::fTail( Double_t * x, Double_t * par ){
 
 double PlotQA::meanForPeriod( TProfile * h, ConfigRange * cr ){
 
+	h->GetXaxis()->SetRangeUser( cr->min, cr->max );
+
 	double total = 0;
+	double n = 0;
 	for ( int i = cr->min; i < cr->max; i++ ){
-		total += h->GetBinContent( i );
+		double bc = h->GetBinContent( i );
+		if ( bc == 0 || badRuns[ i ] )
+			continue;
+		total += bc;
+		n += 1;
 	}
-	return ( total / ( cr->max - cr->min) );
+
+	cout << " Mean " << h->GetTitle() << " : " << ( total / n ) << " vs. " << h->GetMean( 2 ) << endl;
+
+	return ( total / n  );
 }
 
 double PlotQA::rmsForPeriod( TProfile * h, ConfigRange * cr ){
 
+	h->GetXaxis()->SetRangeUser( cr->min, cr->max );
+	//return h->GetRMS( 2 );
+
 	double m = meanForPeriod( h, cr );
 	double total = 0;
+	double n = 0;
 	for ( int i = cr->min; i < cr->max; i++ ){
+
 		double bc = h->GetBinContent( i );
+		if ( badRuns[ i ] )
+			continue;
 		total += ( m - bc )*( m - bc );
+		n += 1;
 	}
-	return TMath::Sqrt( total / ( cr->max - cr->min) );
+
+	cout << " var " << h->GetTitle() << " : " << TMath::Sqrt( total / n ) << " vs. " << h->GetRMS( 2 ) << endl;
+
+	return TMath::Sqrt( total / n  );
 }
 
 
 void PlotQA::reportBadRuns(){
 
-	cout << " badRuns = { ";
+
+	TH1D * runNumbers = (TH1D*)inFile->Get( "RunNumbers" );
+
+	cout << " badRuns[] = { ";
 	for ( int i = 1; i <= nRuns; i++ ){
 		if ( badRuns[ i ] ){
-			cout << EventQA::runList[ i - 1 ];
+			cout << EventQA::runList[ i ] ;
+			if ( i != nRuns )
+				cout <<", ";
+			cout << endl; 
+
+		}
+	}
+	cout <<" }" << endl;
+
+	cout << " badRunsIndices[] = { ";
+	for ( int i = 1; i <= nRuns; i++ ){
+		if ( badRuns[ i ] ){
+			cout <<  i ;
 			if ( i != nRuns )
 				cout <<", ";
 			cout << endl; 

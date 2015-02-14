@@ -4,7 +4,7 @@ project = rmc
 # source suffix
 source = .cpp 
 # object files to make
-objects = rmc.o RefMultPicoDst.o EventQA.o PlotQA.o RunListMaker.o
+objects = rmc.o RefMultPicoDst.o EventQA.o PlotQA.o VtxSeed.o
 
 sources = $(wildcard *.cpp)
 headers = $(wildcard ../include/*.h)
@@ -17,7 +17,7 @@ ROOTGLIBS     	= $(shell root-config --glibs)
 
 # Custom Project includes and libs
 # -lGui -lHtml -lGuiHtml
-includes		= -I../include -I$(JDB_LIB)/include/jdb -I. -I$(ROOTSYS)/include
+includes		= -I../include -I$(JDB_LIB)/include/ -I$(JDB_LIB)/include/jdb -I. -I$(ROOTSYS)/include
 libraries 		= $(ROOTLIBS) $(SYSLIBS)
 staticLibs 		= $(JDB_LIB)/lib/libJDB.a
 
